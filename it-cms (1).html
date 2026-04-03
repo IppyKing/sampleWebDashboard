@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IT CMS — Information Technology Content Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0a1628;--navy-mid:#112240;--navy-light:#1a3a6b;
+  --yellow:#fbbf24;--yellow-dark:#d97706;
+  --white:#ffffff;
+  --g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;
+  --g300:#cbd5e1;--g400:#94a3b8;--g600:#475569;
+  --green:#22c55e;--orange:#f59e0b;--blue:#3b82f6;
+  --r:10px;
+  --sh:0 4px 24px rgba(10,22,40,.12);
+  --sh-lg:0 8px 40px rgba(10,22,40,.18);
+  --tr:.18s ease;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--g50);color:var(--navy);font-size:15px}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+
+.hidden{display:none!important}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.anim-slide{animation:slideUp .22s ease}
+
+/* ── LOGIN ── */
+#screen-login{min-height:100vh;display:flex;background:var(--navy);overflow:hidden}
+.login-left{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px;position:relative;overflow:hidden}
+.login-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(251,191,36,.07)1px,transparent 1px),linear-gradient(90deg,rgba(251,191,36,.07)1px,transparent 1px);background-size:44px 44px}
+.login-glow{position:absolute;top:-20%;left:-10%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.1)0%,transparent 70%);pointer-events:none}
+.login-brand{position:relative;z-index:1;text-align:center}
+.login-logo{width:76px;height:76px;border-radius:20px;background:var(--yellow);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:0 0 50px rgba(251,191,36,.35)}
+.login-logo svg{color:var(--navy)}
+.login-brand h1{font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;color:var(--white);letter-spacing:-1px}
+.login-brand h1 span{color:var(--yellow)}
+.login-brand p{color:rgba(255,255,255,.45);font-size:.88rem;margin-top:8px;letter-spacing:.05em}
+.login-feats{position:relative;z-index:1;margin-top:52px;display:flex;flex-direction:column;gap:13px}
+.login-feat{display:flex;align-items:center;gap:14px;color:rgba(255,255,255,.65);font-size:.87rem}
+.login-feat-ico{width:38px;height:38px;border-radius:9px;flex-shrink:0;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.2);display:flex;align-items:center;justify-content:center;color:var(--yellow)}
+.login-right{width:480px;background:var(--white);display:flex;flex-direction:column;justify-content:center;padding:60px 50px;box-shadow:-20px 0 60px rgba(0,0,0,.28)}
+.login-right h2{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;color:var(--navy);margin-bottom:6px}
+.login-sub{color:var(--g400);font-size:.88rem;margin-bottom:34px}
+/* ── FORMS ── */
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:.74rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border:2px solid var(--g200);border-radius:var(--r);font-size:.92rem;color:var(--navy);background:var(--white);outline:none;transition:border-color var(--tr),box-shadow var(--tr)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--yellow);box-shadow:0 0 0 4px rgba(251,191,36,.13)}
+.form-group textarea{resize:vertical;min-height:110px;line-height:1.6}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-err{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:.83rem;margin-bottom:16px;display:none}
+.form-actions{display:flex;justify-content:flex-end;gap:10px;align-items:center;padding:16px 26px;border-top:1px solid var(--g100)}
+/* ── BUTTONS ── */
+.btn-primary{width:100%;padding:13px;background:var(--navy);color:var(--yellow);font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;border:none;border-radius:var(--r);cursor:pointer;transition:all var(--tr)}
+.btn-primary:hover{background:var(--navy-light);transform:translateY(-1px);box-shadow:0 4px 16px rgba(10,22,40,.25)}
+.btn-primary:active{transform:translateY(0)}
+.btn-yellow{padding:9px 18px;background:var(--yellow);color:var(--navy);font-family:'Syne',sans-serif;font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;border:none;border-radius:var(--r);cursor:pointer;transition:all var(--tr);display:inline-flex;align-items:center;gap:6px}
+.btn-yellow:hover{background:var(--yellow-dark);transform:translateY(-1px)}
+.btn-outline{padding:9px 18px;background:transparent;color:var(--navy);border:2px solid var(--g200);border-radius:var(--r);font-weight:500;cursor:pointer;transition:all var(--tr);display:inline-flex;align-items:center;gap:6px;font-size:.85rem}
+.btn-outline:hover{border-color:var(--navy);background:var(--g50)}
+.btn-ghost{padding:7px;background:transparent;border:1px solid var(--g200);color:var(--g600);border-radius:8px;cursor:pointer;transition:all var(--tr);display:inline-flex;align-items:center}
+.btn-ghost:hover{background:var(--g100);border-color:var(--g400)}
+.btn-danger{padding:7px 13px;background:#fee2e2;color:#dc2626;border:none;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;transition:background var(--tr);display:inline-flex;align-items:center;gap:5px}
+.btn-danger:hover{background:#fecaca}
+.login-hint{text-align:center;font-size:.78rem;color:var(--g400);margin-top:20px}
+.login-hint strong{color:var(--navy)}
+.forgot-link{font-size:.79rem;color:var(--navy-light);cursor:pointer;font-weight:600;display:block;text-align:right;margin-bottom:20px;margin-top:-6px}
+/* ── APP LAYOUT ── */
+#screen-app{display:flex;min-height:100vh}
+.sidebar{width:255px;flex-shrink:0;background:var(--navy);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sidebar-brand{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:11px}
+.sb-logo{width:40px;height:40px;border-radius:10px;background:var(--yellow);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-brand-txt h2{font-family:'Syne',sans-serif;font-size:.98rem;font-weight:800;color:var(--white);line-height:1}
+.sb-brand-txt span{font-size:.67rem;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em}
+.sb-nav{flex:1;padding:14px 10px}
+.sb-section{font-size:.64rem;font-weight:800;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:.12em;padding:0 8px;margin:18px 0 6px}
+.sb-item{display:flex;align-items:center;gap:9px;width:100%;padding:9px 11px;border-radius:8px;color:rgba(255,255,255,.52);font-size:.88rem;font-weight:500;background:transparent;border:none;text-align:left;transition:all var(--tr);margin-bottom:2px;cursor:pointer}
+.sb-item:hover{color:var(--white);background:rgba(255,255,255,.07)}
+.sb-item.active{color:var(--navy);background:var(--yellow);font-weight:700}
+.sb-item .bc{margin-left:auto;background:var(--yellow);color:var(--navy);font-size:.63rem;font-weight:800;padding:1px 6px;border-radius:10px}
+.sb-item.active .bc{background:var(--navy);color:var(--yellow)}
+.sidebar-footer{padding:14px 10px;border-top:1px solid rgba(255,255,255,.08)}
+.sb-user{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:8px;margin-bottom:4px}
+.avatar{border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;color:var(--navy);flex-shrink:0}
+.sb-user .avatar{width:32px;height:32px;font-size:.72rem}
+.sb-user-info h4{font-size:.83rem;color:var(--white);font-weight:600}
+.sb-user-info span{font-size:.7rem;color:rgba(255,255,255,.38)}
+.sb-logout{display:flex;align-items:center;gap:9px;width:100%;padding:9px 11px;border-radius:8px;color:#f87171;font-size:.88rem;font-weight:500;background:transparent;border:none;text-align:left;transition:all var(--tr);cursor:pointer}
+.sb-logout:hover{background:rgba(248,113,113,.1)}
+/* ── TOPBAR ── */
+.main-wrap{margin-left:255px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:62px;background:var(--white);border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:50}
+.topbar-left h1{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--navy)}
+.topbar-left p{font-size:.74rem;color:var(--g400);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tb-search{display:flex;align-items:center;gap:8px;background:var(--g100);border:1px solid var(--g200);border-radius:8px;padding:7px 13px;min-width:190px}
+.tb-search input{border:none;background:transparent;outline:none;font-size:.83rem;color:var(--navy);width:100%}
+.tb-search input::placeholder{color:var(--g400)}
+.tb-notif{position:relative;width:36px;height:36px;border-radius:8px;background:var(--g100);border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--g600);transition:background var(--tr)}
+.tb-notif:hover{background:var(--g200)}
+.notif-dot{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--yellow)}
+.topbar-avatar{width:34px;height:34px;font-size:.73rem}
+/* ── PAGES ── */
+.page-wrap{padding:28px 30px;flex:1}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+.page-header-left h2{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--navy)}
+.page-header-left p{font-size:.82rem;color:var(--g400);margin-top:3px}
+.page-header-right{display:flex;gap:10px;align-items:center}
+/* ── CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.stat-card{background:var(--white);border-radius:14px;padding:20px 22px;border:1px solid var(--g200);box-shadow:var(--sh);display:flex;align-items:flex-start;justify-content:space-between;transition:transform var(--tr),box-shadow var(--tr)}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
+.stat-label{font-size:.72rem;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.stat-val{font-family:'Syne',sans-serif;font-size:1.85rem;font-weight:800;color:var(--navy);line-height:1}
+.stat-sub{font-size:.74rem;color:var(--green);margin-top:5px;font-weight:500}
+.stat-ico{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card{background:var(--white);border-radius:14px;border:1px solid var(--g200);box-shadow:var(--sh);overflow:hidden}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--g100)}
+.card-hd h3{font-family:'Syne',sans-serif;font-size:.97rem;font-weight:700;color:var(--navy)}
+.card-bd{padding:16px 22px}
+/* ── TABLES ── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:var(--g50);padding:8px 15px;text-align:left;font-size:.7rem;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--g200)}
+td{padding:11px 15px;font-size:.85rem;color:var(--navy);border-bottom:1px solid var(--g100);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(251,191,36,.04)}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:.71rem;font-weight:700;letter-spacing:.03em}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.71rem;font-weight:600;background:rgba(10,22,40,.06);color:var(--navy)}
+.td-act{display:flex;gap:6px;align-items:center}
+/* ── DASH ── */
+.dash-grid{display:grid;grid-template-columns:1.8fr 1fr;gap:18px}
+.act-item{display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-bottom:1px solid var(--g100)}
+.act-item:last-child{border-bottom:none}
+.act-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);margin-top:5px;flex-shrink:0}
+.act-text{font-size:.82rem;color:var(--navy);line-height:1.5}
+.act-time{font-size:.71rem;color:var(--g400);margin-top:2px}
+.mini-chart{display:flex;align-items:flex-end;gap:4px;height:56px;padding:0 2px}
+.mini-bar{flex:1;border-radius:3px 3px 0 0;background:var(--yellow);opacity:.65;transition:opacity var(--tr);min-width:10px;cursor:pointer}
+.mini-bar:hover{opacity:1}
+.mini-bar.hi{opacity:1;background:var(--navy)}
+.chart-labels{display:flex;justify-content:space-between;margin-top:7px;font-size:.7rem;color:var(--g400)}
+/* ── CONTENT ── */
+.content-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--g200);border-radius:8px;padding:8px 13px;flex:1;max-width:300px}
+.search-bar input{border:none;background:transparent;outline:none;font-size:.85rem;color:var(--navy);width:100%}
+.search-bar input::placeholder{color:var(--g400)}
+.filter-sel{padding:8px 11px;background:var(--white);border:1px solid var(--g200);border-radius:8px;font-size:.83rem;color:var(--navy);outline:none;cursor:pointer}
+/* ── FORM CARD ── */
+.form-card{background:var(--white);border-radius:14px;border:1px solid var(--g200);box-shadow:var(--sh);max-width:760px}
+.form-card-hd{padding:22px 26px;background:var(--navy);border-radius:14px 14px 0 0}
+.form-card-hd h2{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--white)}
+.form-card-hd p{color:rgba(255,255,255,.42);font-size:.79rem;margin-top:3px}
+.form-card-bd{padding:26px}
+/* ── SETTINGS ── */
+.settings-grid{display:grid;grid-template-columns:210px 1fr;gap:22px}
+.settings-nav{display:flex;flex-direction:column;gap:3px}
+.set-nav-item{padding:9px 13px;border-radius:8px;cursor:pointer;font-size:.86rem;font-weight:500;color:var(--g600);transition:all .15s;border:none;background:transparent;text-align:left;width:100%}
+.set-nav-item:hover{background:var(--g100);color:var(--navy)}
+.set-nav-item.active{background:var(--navy);color:var(--yellow);font-weight:700}
+.toggle{position:relative;display:inline-block;width:42px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;border-radius:11px;cursor:pointer;background:var(--g300);transition:.25s}
+.toggle input:checked+.toggle-slider{background:var(--yellow)}
+.toggle-slider::after{content:'';position:absolute;height:16px;width:16px;border-radius:50%;background:var(--white);left:3px;bottom:3px;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle input:checked+.toggle-slider::after{transform:translateX(20px)}
+.notif-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--g100)}
+.notif-row:last-child{border-bottom:none}
+.notif-row h4{font-size:.88rem;font-weight:600;color:var(--navy)}
+.notif-row p{font-size:.77rem;color:var(--g400);margin-top:2px}
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,22,40,.6);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex;animation:fadeIn .15s}
+.modal{background:var(--white);border-radius:16px;width:500px;max-width:calc(100vw - 40px);box-shadow:0 24px 60px rgba(0,0,0,.22);overflow:hidden;animation:slideUp .2s ease}
+.modal-hd{padding:18px 22px;background:var(--navy);display:flex;align-items:center;justify-content:space-between}
+.modal-hd h3{font-family:'Syne',sans-serif;font-size:.97rem;font-weight:700;color:var(--white)}
+.modal-close-x{background:transparent;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:1.2rem;line-height:1;padding:2px 5px;transition:color var(--tr)}
+.modal-close-x:hover{color:var(--white)}
+.modal-bd{padding:22px}
+.modal-ft{display:flex;justify-content:flex-end;gap:10px;padding:14px 22px;border-top:1px solid var(--g100)}
+/* ── TOAST ── */
+#toast{position:fixed;bottom:26px;right:26px;background:var(--navy);color:var(--white);padding:12px 18px;border-radius:10px;display:none;align-items:center;gap:9px;box-shadow:var(--sh-lg);z-index:999;font-size:.85rem;border-left:4px solid var(--yellow);animation:slideUp .25s ease}
+#toast.show{display:flex}
+#toast .t-icon{color:var(--yellow)}
+/* ── REPORTS ── */
+.bar-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--g100)}
+.bar-row:last-child{border-bottom:none}
+.bar-label{font-size:.82rem;color:var(--navy);width:165px;flex-shrink:0;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:8px;background:var(--g100);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;background:var(--yellow)}
+.bar-num{font-size:.77rem;color:var(--g600);width:55px;text-align:right;flex-shrink:0}
+@media(max-width:880px){
+  .sidebar{transform:translateX(-100%)}
+  .main-wrap{margin-left:0}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .dash-grid,.settings-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="screen-login">
+  <div class="login-left">
+    <div class="login-grid"></div>
+    <div class="login-glow"></div>
+    <div class="login-brand">
+      <div class="login-logo">
+        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6" stroke-width="3"/><line x1="6" y1="18" x2="6.01" y2="18" stroke-width="3"/></svg>
+      </div>
+      <h1>IT<span>CMS</span></h1>
+      <p>INFORMATION TECHNOLOGY CONTENT PLATFORM</p>
+    </div>
+    <div class="login-feats">
+      <div class="login-feat"><div class="login-feat-ico"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>Enterprise-grade security &amp; access controls</div>
+      <div class="login-feat"><div class="login-feat-ico"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>Full lifecycle IT content management</div>
+      <div class="login-feat"><div class="login-feat-ico"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>Real-time analytics &amp; reporting</div>
+      <div class="login-feat"><div class="login-feat-ico"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>Multi-role team collaboration</div>
+    </div>
+  </div>
+  <div class="login-right">
+    <h2>Welcome back</h2>
+    <p class="login-sub">Sign in to your IT CMS account to continue</p>
+    <div class="form-err" id="login-err"></div>
+    <div class="form-group"><label>Email Address</label><input type="email" id="login-email" placeholder="admin@itcms.io" value="admin@itcms.io"/></div>
+    <div class="form-group"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" value="admin123"/></div>
+    <span class="forgot-link">Forgot password?</span>
+    <button class="btn-primary" id="login-btn">Sign In →</button>
+    <p class="login-hint">Demo: <strong>admin@itcms.io</strong> / <strong>admin123</strong></p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="screen-app" class="hidden">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sb-logo"><svg width="20" height="20" fill="none" stroke="#0a1628" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6" stroke-width="3"/><line x1="6" y1="18" x2="6.01" y2="18" stroke-width="3"/></svg></div>
+      <div class="sb-brand-txt"><h2>IT CMS</h2><span>Content Platform</span></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">Main Menu</div>
+      <button class="sb-item active" data-page="dashboard"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</button>
+      <button class="sb-item" data-page="content"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>Content <span class="bc" id="sb-count">6</span></button>
+      <button class="sb-item" data-page="users"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Users</button>
+      <button class="sb-item" data-page="reports"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</button>
+      <div class="sb-section">Account</div>
+      <button class="sb-item" data-page="settings"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sb-user"><div class="avatar" id="sb-avatar" style="width:32px;height:32px;font-size:.72rem">AM</div><div class="sb-user-info"><h4 id="sb-uname">Alex Morgan</h4><span>Administrator</span></div></div>
+      <button class="sb-logout" id="logout-btn"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+    <div class="topbar">
+      <div class="topbar-left"><h1 id="topbar-title">Dashboard</h1><p id="topbar-date"></p></div>
+      <div class="topbar-right">
+        <div class="tb-search"><svg width="13" height="13" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search platform…"/></div>
+        <div class="tb-notif"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
+        <div class="avatar topbar-avatar" id="tb-avatar">AM</div>
+      </div>
+    </div>
+    <div class="page-wrap">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="anim-slide">
+        <div class="page-header">
+          <div class="page-header-left"><h2>Dashboard</h2><p>Welcome back! Here's what's happening in your IT knowledge base.</p></div>
+          <div class="page-header-right"><button class="btn-yellow" id="btn-gen-report"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Generate Report</button></div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card"><div><div class="stat-label">Total Articles</div><div class="stat-val" id="s-articles">128</div><div class="stat-sub">↑ +12 this month</div></div><div class="stat-ico" style="background:#e0f2fe;color:#0284c7"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div></div>
+          <div class="stat-card"><div><div class="stat-label">Active Users</div><div class="stat-val" id="s-users">24</div><div class="stat-sub">↑ +3 this week</div></div><div class="stat-ico" style="background:#fef9c3;color:#ca8a04"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
+          <div class="stat-card"><div><div class="stat-label">Total Views</div><div class="stat-val">84.2K</div><div class="stat-sub">↑ +18% vs last mo.</div></div><div class="stat-ico" style="background:#dcfce7;color:#16a34a"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div></div>
+          <div class="stat-card"><div><div class="stat-label">Pending Review</div><div class="stat-val">7</div><div class="stat-sub" style="color:var(--orange)">⚠ Needs attention</div></div><div class="stat-ico" style="background:#fce7f3;color:#db2777"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div></div>
+        </div>
+        <div class="dash-grid">
+          <div class="card"><div class="card-hd"><h3>Recent Articles</h3><span class="tag">Last 30 days</span></div><div class="table-wrap"><table><thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Views</th></tr></thead><tbody id="dash-rows"></tbody></table></div></div>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card"><div class="card-hd"><h3>Monthly Views</h3></div><div class="card-bd"><div class="mini-chart" id="mini-chart"></div><div class="chart-labels"><span>Apr</span><span>Jul</span><span>Oct</span><span>Mar</span></div></div></div>
+            <div class="card" style="flex:1"><div class="card-hd"><h3>Recent Activity</h3></div><div class="card-bd" style="padding-top:8px" id="activity-list"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTENT -->
+      <div id="page-content" class="hidden anim-slide">
+        <div class="page-header">
+          <div class="page-header-left"><h2>Content Management</h2><p id="content-lbl">6 articles</p></div>
+          <div class="page-header-right"><button class="btn-yellow" id="btn-new-article"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Article</button></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">
+            <div class="content-toolbar">
+              <div class="search-bar"><svg width="13" height="13" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="content-search" placeholder="Search articles or authors…"/></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <select class="filter-sel" id="filter-cat"><option value="">All Categories</option><option>Security</option><option>Infrastructure</option><option>AI &amp; Automation</option><option>Networking</option><option>Cloud</option><option>DevOps</option><option>Compliance</option></select>
+                <select class="filter-sel" id="filter-status"><option value="">All Status</option><option>Published</option><option>Draft</option><option>Review</option></select>
+              </div>
+            </div>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Status</th><th>Date</th><th>Views</th><th>Actions</th></tr></thead><tbody id="content-tbody"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- ARTICLE FORM -->
+      <div id="page-form" class="hidden anim-slide">
+        <div class="page-header">
+          <div class="page-header-left"><h2 id="af-heading">New Article</h2><p id="af-sub">Fill in the details below</p></div>
+          <div class="page-header-right"><button class="btn-outline" id="btn-back">← Back to Content</button></div>
+        </div>
+        <div class="form-card">
+          <div class="form-card-hd"><h2 id="af-card-h">📝 Create New Article</h2><p>Fields marked * are required</p></div>
+          <div class="form-card-bd">
+            <input type="hidden" id="af-id"/>
+            <div class="form-group"><label>Article Title *</label><input type="text" id="af-ttl" placeholder="Enter a clear, descriptive title…"/></div>
+            <div class="form-row">
+              <div class="form-group"><label>Category *</label><select id="af-cat"><option value="">Select category…</option><option>Security</option><option>Infrastructure</option><option>AI &amp; Automation</option><option>Networking</option><option>Cloud</option><option>DevOps</option><option>Compliance</option></select></div>
+              <div class="form-group"><label>Status</label><select id="af-stat"><option>Draft</option><option>Review</option><option>Published</option></select></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Author *</label><input type="text" id="af-auth" placeholder="Author full name…"/></div>
+              <div class="form-group"><label>Tags</label><input type="text" id="af-tags" placeholder="e.g. security, cloud, devops"/></div>
+            </div>
+            <div class="form-group"><label>Article Body *</label><textarea id="af-body" rows="7" placeholder="Write your article content here…"></textarea></div>
+            <div class="form-group"><label>SEO Meta Description</label><input type="text" id="af-meta" placeholder="Brief description for search engines…"/></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-outline" id="btn-cancel-form">Cancel</button>
+            <button class="btn-outline" id="btn-save-draft">Save as Draft</button>
+            <button class="btn-yellow" id="btn-publish"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Publish Article</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS -->
+      <div id="page-users" class="hidden anim-slide">
+        <div class="page-header">
+          <div class="page-header-left"><h2>User Management</h2><p id="users-lbl">5 registered users</p></div>
+          <div class="page-header-right"><button class="btn-yellow" id="btn-add-user"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User</button></div>
+        </div>
+        <div class="card"><div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead><tbody id="users-tbody"></tbody></table></div></div>
+      </div>
+
+      <!-- REPORTS -->
+      <div id="page-reports" class="hidden anim-slide">
+        <div class="page-header">
+          <div class="page-header-left"><h2>Reports &amp; Analytics</h2><p>Performance overview of your IT content</p></div>
+          <div class="page-header-right"><button class="btn-yellow" id="btn-export"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <div class="card"><div class="card-hd"><h3>Content by Category</h3></div><div class="table-wrap"><table><thead><tr><th>Category</th><th>Articles</th><th>Views</th></tr></thead><tbody id="rep-cat"></tbody></table></div></div>
+          <div class="card"><div class="card-hd"><h3>Top Articles by Views</h3></div><div class="card-bd" id="rep-top"></div></div>
+        </div>
+        <div style="margin-top:18px"><div class="card"><div class="card-hd"><h3>Views Distribution by Category</h3></div><div class="card-bd" id="rep-bars"></div></div></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="page-settings" class="hidden anim-slide">
+        <div class="page-header"><div class="page-header-left"><h2>Settings</h2><p>Manage your account and platform preferences</p></div></div>
+        <div class="settings-grid">
+          <div class="settings-nav">
+            <button class="set-nav-item active" data-tab="profile">👤 Profile</button>
+            <button class="set-nav-item" data-tab="security">🔒 Security</button>
+            <button class="set-nav-item" data-tab="notifications">🔔 Notifications</button>
+            <button class="set-nav-item" data-tab="system">⚙️ System</button>
+          </div>
+          <div>
+            <div id="stab-profile" class="form-card">
+              <div class="form-card-hd"><h2>Profile Settings</h2><p>Update your personal information</p></div>
+              <div class="form-card-bd">
+                <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+                  <div class="avatar" style="width:66px;height:66px;font-size:1.3rem">AM</div>
+                  <button class="btn-outline" id="btn-avatar">Change Avatar</button>
+                </div>
+                <div class="form-row">
+                  <div class="form-group"><label>Full Name</label><input type="text" value="Alex Morgan"/></div>
+                  <div class="form-group"><label>Email Address</label><input type="email" value="admin@itcms.io"/></div>
+                </div>
+                <div class="form-group"><label>Job Title</label><input type="text" value="Senior IT Administrator"/></div>
+                <div class="form-group"><label>Department</label><select><option>Information Technology</option><option>Cybersecurity</option><option>Infrastructure</option><option>Cloud Operations</option></select></div>
+                <div class="form-group"><label>Bio</label><textarea rows="3">IT professional with 10+ years in enterprise content management.</textarea></div>
+              </div>
+              <div class="form-actions"><button class="btn-yellow" id="btn-save-profile"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Save Profile</button></div>
+            </div>
+            <div id="stab-security" class="form-card hidden">
+              <div class="form-card-hd"><h2>Security Settings</h2><p>Manage your password and authentication</p></div>
+              <div class="form-card-bd">
+                <div class="form-group"><label>Current Password</label><input type="password" placeholder="••••••••"/></div>
+                <div class="form-row"><div class="form-group"><label>New Password</label><input type="password" placeholder="••••••••"/></div><div class="form-group"><label>Confirm Password</label><input type="password" placeholder="••••••••"/></div></div>
+                <div style="background:var(--g50);border:1px solid var(--g200);border-radius:10px;padding:16px;margin-top:6px">
+                  <h4 style="font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:5px">Two-Factor Authentication</h4>
+                  <p style="font-size:.79rem;color:var(--g400);margin-bottom:12px">Add an extra layer of security with 2FA</p>
+                  <button class="btn-yellow" id="btn-2fa"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Enable 2FA</button>
+                </div>
+                <div style="margin-top:16px;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px">
+                  <h4 style="font-size:.88rem;font-weight:700;color:#991b1b;margin-bottom:5px">Active Sessions</h4>
+                  <p style="font-size:.79rem;color:#dc2626;margin-bottom:10px">1 active session — Chrome · Kingston, JM</p>
+                  <button class="btn-danger" id="btn-terminate">Terminate All Other Sessions</button>
+                </div>
+              </div>
+              <div class="form-actions"><button class="btn-yellow" id="btn-update-pw"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Update Password</button></div>
+            </div>
+            <div id="stab-notifications" class="form-card hidden">
+              <div class="form-card-hd"><h2>Notification Preferences</h2><p>Choose what you want to be notified about</p></div>
+              <div class="form-card-bd">
+                <div class="notif-row"><div><h4>New article submitted for review</h4><p>When an author submits content for editorial review</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+                <div class="notif-row"><div><h4>Article published</h4><p>When content goes live on the platform</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+                <div class="notif-row"><div><h4>New user registered</h4><p>When a new user joins the platform</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+                <div class="notif-row"><div><h4>Security alerts</h4><p>Unusual login activity or security events</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+                <div class="notif-row"><div><h4>Weekly digest email</h4><p>Summary of platform activity each week</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+                <div class="notif-row"><div><h4>System maintenance notices</h4><p>Scheduled downtime and update alerts</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+              </div>
+              <div class="form-actions"><button class="btn-yellow" id="btn-save-notifs"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Save Preferences</button></div>
+            </div>
+            <div id="stab-system" class="form-card hidden">
+              <div class="form-card-hd"><h2>System Configuration</h2><p>Platform-wide settings and administrative controls</p></div>
+              <div class="form-card-bd">
+                <div class="form-group"><label>Platform Name</label><input type="text" value="IT CMS Portal"/></div>
+                <div class="form-row">
+                  <div class="form-group"><label>Default Language</label><select><option>English (US)</option><option>Spanish</option><option>French</option></select></div>
+                  <div class="form-group"><label>Timezone</label><select><option>UTC-5 (Eastern)</option><option>UTC-6 (Central)</option><option>UTC-8 (Pacific)</option><option>UTC+0 (London)</option></select></div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group"><label>Max File Upload Size</label><select><option>5 MB</option><option>10 MB</option><option selected>25 MB</option><option>50 MB</option></select></div>
+                  <div class="form-group"><label>Session Timeout</label><select><option>30 minutes</option><option selected>1 hour</option><option>4 hours</option></select></div>
+                </div>
+                <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:9px;padding:14px">
+                  <p style="font-size:.81rem;color:#92400e;font-weight:500">⚠️ Maintenance mode logs out all users and restricts access to admins only.</p>
+                  <button class="btn-outline" id="btn-maintenance" style="margin-top:10px;color:#92400e;border-color:#fde68a;font-size:.79rem">Toggle Maintenance Mode</button>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="btn-danger" id="btn-clear-cache" style="padding:9px 16px">Clear Cache</button>
+                <button class="btn-yellow" id="btn-save-sys"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Save Settings</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="modal-delete">
+  <div class="modal">
+    <div class="modal-hd"><h3>Confirm Delete</h3><button class="modal-close-x" id="close-delete">✕</button></div>
+    <div class="modal-bd"><p style="font-size:.9rem;color:var(--g600);line-height:1.6">Are you sure you want to delete this item? This action <strong>cannot be undone</strong>.</p></div>
+    <div class="modal-ft"><button class="btn-outline" id="cancel-delete">Cancel</button><button class="btn-danger" id="confirm-delete" style="padding:9px 18px">Delete</button></div>
+  </div>
+</div>
+
+<!-- ADD USER MODAL -->
+<div class="modal-overlay" id="modal-user">
+  <div class="modal">
+    <div class="modal-hd"><h3>Add New User</h3><button class="modal-close-x" id="close-user-modal">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-group"><label>Full Name *</label><input type="text" id="nu-name" placeholder="Jane Smith"/></div>
+      <div class="form-group"><label>Email Address *</label><input type="email" id="nu-email" placeholder="jane@itcms.io"/></div>
+      <div class="form-group"><label>Role</label><select id="nu-role"><option>Admin</option><option>Editor</option><option selected>Author</option><option>Viewer</option></select></div>
+      <div class="form-group"><label>Send Welcome Email</label><br/><label class="toggle" style="margin-top:6px"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+    </div>
+    <div class="modal-ft"><button class="btn-outline" id="cancel-user-modal">Cancel</button><button class="btn-yellow" id="confirm-add-user"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Add User</button></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><span class="t-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span id="toast-msg">Done!</span></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ── DATA ── */
+  var STATUS_COLORS = { Published: '#22c55e', Draft: '#f59e0b', Review: '#3b82f6' };
+  var ROLE_COLORS   = { Admin: '#ef4444', Editor: '#8b5cf6', Author: '#0ea5e9', Viewer: '#6b7280' };
+  var CHART_DATA    = [35,55,42,68,75,52,88,63,90,72,85,95];
+  var ACTIVITY = [
+    { t: 'Sam Rivera published "AI-Powered IT Service Desk Guide"', d: '10 min ago' },
+    { t: 'Taylor Brooks submitted an article for review', d: '1 hour ago' },
+    { t: 'New user Jordan Lee joined as Viewer', d: '3 hours ago' },
+    { t: 'Alex Morgan updated the Cloud Cost Optimization Playbook', d: 'Yesterday, 4:22 PM' },
+    { t: 'System backup completed successfully', d: 'Yesterday, 2:00 AM' }
+  ];
+  var articles = [
+    { id:1, title:'Zero Trust Architecture Implementation', category:'Security', status:'Published', author:'Alex Morgan', date:'2026-03-28', views:1240 },
+    { id:2, title:'Migrating to Kubernetes: Best Practices', category:'Infrastructure', status:'Draft', author:'Jamie Chen', date:'2026-03-25', views:870 },
+    { id:3, title:'AI-Powered IT Service Desk Guide', category:'AI & Automation', status:'Published', author:'Sam Rivera', date:'2026-03-20', views:3102 },
+    { id:4, title:'Network Segmentation Strategies', category:'Networking', status:'Review', author:'Taylor Brooks', date:'2026-03-18', views:540 },
+    { id:5, title:'Cloud Cost Optimization Playbook', category:'Cloud', status:'Published', author:'Alex Morgan', date:'2026-03-15', views:2210 },
+    { id:6, title:'Incident Response Automation', category:'Security', status:'Draft', author:'Jordan Lee', date:'2026-03-10', views:320 }
+  ];
+  var users = [
+    { id:1, name:'Alex Morgan', email:'alex@itcms.io', role:'Admin', status:'Active', joined:'2024-01-12' },
+    { id:2, name:'Jamie Chen', email:'jamie@itcms.io', role:'Editor', status:'Active', joined:'2024-03-05' },
+    { id:3, name:'Sam Rivera', email:'sam@itcms.io', role:'Author', status:'Active', joined:'2024-06-18' },
+    { id:4, name:'Taylor Brooks', email:'taylor@itcms.io', role:'Author', status:'Inactive', joined:'2024-08-22' },
+    { id:5, name:'Jordan Lee', email:'jordan@itcms.io', role:'Viewer', status:'Active', joined:'2025-01-03' }
+  ];
+  var nextId = 10;
+  var deleteCb = null;
+  var PAGES = ['dashboard','content','form','users','reports','settings'];
+  var PAGE_TITLES = { dashboard:'Dashboard', content:'Content Management', form:'Article Editor', users:'User Management', reports:'Reports & Analytics', settings:'Settings' };
+
+  /* ── UTILS ── */
+  function q(id) { return document.getElementById(id); }
+  function initials(n) { return n.split(' ').map(function(w){ return w[0]; }).join('').toUpperCase(); }
+
+  var toastTimer;
+  function toast(msg) {
+    q('toast-msg').textContent = msg;
+    q('toast').classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ q('toast').classList.remove('show'); }, 3200);
+  }
+
+  function openModal(id)  { q(id).classList.add('open'); }
+  function closeModal(id) { q(id).classList.remove('open'); }
+
+  /* ── NAV ── */
+  function navTo(page) {
+    PAGES.forEach(function(p) {
+      var el = q('page-' + p);
+      if (el) el.classList.add('hidden');
+    });
+    var target = q('page-' + page);
+    if (!target) return;
+    target.classList.remove('hidden');
+    target.classList.remove('anim-slide');
+    void target.offsetWidth;
+    target.classList.add('anim-slide');
+    document.querySelectorAll('.sb-item[data-page]').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-page') === page);
+    });
+    q('topbar-title').textContent = PAGE_TITLES[page] || 'IT CMS';
+  }
+
+  /* ── LOGIN ── */
+  function doLogin() {
+    var email = q('login-email').value.trim();
+    var pass  = q('login-pass').value;
+    var err   = q('login-err');
+    err.style.display = 'none';
+    if (!email || !pass) {
+      err.textContent = 'Please enter both email and password.';
+      err.style.display = 'block';
+      return;
+    }
+    var btn = q('login-btn');
+    btn.textContent = 'Signing in…';
+    btn.disabled = true;
+    setTimeout(function() {
+      if (email === 'admin@itcms.io' && pass === 'admin123') {
+        q('screen-login').classList.add('hidden');
+        q('screen-app').classList.remove('hidden');
+        initApp();
+      } else {
+        err.textContent = 'Invalid credentials. Try admin@itcms.io / admin123';
+        err.style.display = 'block';
+        btn.textContent = 'Sign In →';
+        btn.disabled = false;
+      }
+    }, 800);
+  }
+
+  q('login-btn').addEventListener('click', doLogin);
+  q('login-pass').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
+  q('login-email').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
+
+  q('logout-btn').addEventListener('click', function() {
+    q('screen-app').classList.add('hidden');
+    q('screen-login').classList.remove('hidden');
+    q('login-btn').textContent = 'Sign In →';
+    q('login-btn').disabled = false;
+    q('login-err').style.display = 'none';
+  });
+
+  /* ── INIT ── */
+  function initApp() {
+    q('topbar-date').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    renderDashboard();
+    renderContentTable();
+    renderUsersTable();
+    renderReports();
+    navTo('dashboard');
+  }
+
+  /* ── SIDEBAR ── */
+  document.querySelectorAll('.sb-item[data-page]').forEach(function(btn) {
+    btn.addEventListener('click', function() { navTo(btn.getAttribute('data-page')); });
+  });
+
+  /* ── DASHBOARD ── */
+  function renderDashboard() {
+    q('dash-rows').innerHTML = articles.slice(0,4).map(function(a) {
+      return '<tr><td style="font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+a.title+'</td><td><span class="tag">'+a.category+'</span></td><td><span class="badge" style="background:'+STATUS_COLORS[a.status]+'22;color:'+STATUS_COLORS[a.status]+'">'+a.status+'</span></td><td>'+a.views.toLocaleString()+'</td></tr>';
+    }).join('');
+
+    q('mini-chart').innerHTML = CHART_DATA.map(function(h,i) {
+      return '<div class="mini-bar'+(i===11?' hi':'')+'" style="height:'+h+'%"></div>';
+    }).join('');
+
+    q('activity-list').innerHTML = ACTIVITY.map(function(a) {
+      return '<div class="act-item"><div class="act-dot"></div><div><div class="act-text">'+a.t+'</div><div class="act-time">'+a.d+'</div></div></div>';
+    }).join('');
+  }
+
+  q('btn-gen-report').addEventListener('click', function(){ toast('Report generated successfully!'); });
+
+  /* ── CONTENT TABLE ── */
+  function renderContentTable() {
+    var srch = (q('content-search').value || '').toLowerCase();
+    var cat  = q('filter-cat').value;
+    var st   = q('filter-status').value;
+    var filtered = articles.filter(function(a) {
+      return (!cat || a.category === cat) &&
+             (!st  || a.status === st) &&
+             (!srch || a.title.toLowerCase().indexOf(srch) > -1 || a.author.toLowerCase().indexOf(srch) > -1);
+    });
+    q('content-lbl').textContent = articles.length + ' articles in your knowledge base';
+    q('sb-count').textContent = articles.length;
+
+    if (!filtered.length) {
+      q('content-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--g400);padding:30px">No articles match your filters.</td></tr>';
+      return;
+    }
+    q('content-tbody').innerHTML = filtered.map(function(a) {
+      return '<tr><td style="font-weight:600;max-width:220px">'+a.title+'</td><td><span class="tag">'+a.category+'</span></td><td style="color:var(--g600)">'+a.author+'</td><td><span class="badge" style="background:'+STATUS_COLORS[a.status]+'22;color:'+STATUS_COLORS[a.status]+'">'+a.status+'</span></td><td style="color:var(--g400);font-size:.79rem">'+a.date+'</td><td>'+a.views.toLocaleString()+'</td><td><div class="td-act"><button class="btn-ghost edit-btn" data-id="'+a.id+'"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="btn-danger del-btn" data-id="'+a.id+'"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>';
+    }).join('');
+
+    document.querySelectorAll('.edit-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { openArticleForm(parseInt(btn.getAttribute('data-id'))); });
+    });
+    document.querySelectorAll('.del-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var aid = parseInt(btn.getAttribute('data-id'));
+        deleteCb = function() {
+          articles = articles.filter(function(a){ return a.id !== aid; });
+          renderContentTable(); renderDashboard();
+          toast('Article deleted.'); closeModal('modal-delete');
+        };
+        openModal('modal-delete');
+      });
+    });
+  }
+
+  q('content-search').addEventListener('input', renderContentTable);
+  q('filter-cat').addEventListener('change', renderContentTable);
+  q('filter-status').addEventListener('change', renderContentTable);
+  q('btn-new-article').addEventListener('click', function(){ openArticleForm(null); });
+
+  /* ── ARTICLE FORM ── */
+  function openArticleForm(id) {
+    var a = id ? articles.find(function(x){ return x.id === id; }) : null;
+    q('af-id').value   = id || '';
+    q('af-ttl').value  = a ? a.title : '';
+    q('af-cat').value  = a ? a.category : '';
+    q('af-stat').value = a ? a.status : 'Draft';
+    q('af-auth').value = a ? a.author : '';
+    q('af-tags').value = '';
+    q('af-body').value = '';
+    q('af-meta').value = '';
+    q('af-heading').textContent  = a ? 'Edit Article' : 'New Article';
+    q('af-sub').textContent      = a ? 'Editing: ' + a.title : 'Fill in the details below';
+    q('af-card-h').textContent   = a ? '✏️ Edit Article' : '📝 Create New Article';
+    navTo('form');
+  }
+
+  function saveArticle(forceStatus) {
+    var id     = q('af-id').value;
+    var title  = q('af-ttl').value.trim();
+    var cat    = q('af-cat').value;
+    var author = q('af-auth').value.trim();
+    if (!title || !cat || !author) { toast('Please fill in all required fields.'); return; }
+    var status = forceStatus || q('af-stat').value;
+    if (id) {
+      var idx = articles.findIndex(function(a){ return a.id === parseInt(id); });
+      if (idx > -1) { articles[idx].title = title; articles[idx].category = cat; articles[idx].status = status; articles[idx].author = author; }
+      toast('Article updated!');
+    } else {
+      articles.unshift({ id: nextId++, title: title, category: cat, status: status, author: author, date: new Date().toISOString().split('T')[0], views: 0 });
+      toast(status === 'Draft' ? 'Saved as draft!' : 'Article published!');
+    }
+    renderContentTable(); renderDashboard(); navTo('content');
+  }
+
+  q('btn-publish').addEventListener('click', function(){ saveArticle(); });
+  q('btn-save-draft').addEventListener('click', function(){ saveArticle('Draft'); });
+  q('btn-cancel-form').addEventListener('click', function(){ navTo('content'); });
+  q('btn-back').addEventListener('click', function(){ navTo('content'); });
+
+  /* ── USERS ── */
+  function renderUsersTable() {
+    q('users-lbl').textContent = users.length + ' registered users';
+    q('users-tbody').innerHTML = users.map(function(u) {
+      return '<tr><td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:30px;height:30px;font-size:.67rem">'+initials(u.name)+'</div><span style="font-weight:600">'+u.name+'</span></div></td><td style="color:var(--g600)">'+u.email+'</td><td><span class="badge" style="background:'+ROLE_COLORS[u.role]+'22;color:'+ROLE_COLORS[u.role]+'">'+u.role+'</span></td><td><span class="badge" style="background:'+(u.status==='Active'?'#dcfce7':'#f1f5f9')+';color:'+(u.status==='Active'?'#16a34a':'#94a3b8')+'">'+u.status+'</span></td><td style="color:var(--g400);font-size:.79rem">'+u.joined+'</td><td><div class="td-act"><button class="btn-ghost edit-user-btn" data-uid="'+u.id+'"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="btn-danger del-user-btn" data-uid="'+u.id+'"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></div></td></tr>';
+    }).join('');
+
+    document.querySelectorAll('.edit-user-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){ toast('User edit form coming soon!'); });
+    });
+    document.querySelectorAll('.del-user-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var uid = parseInt(btn.getAttribute('data-uid'));
+        deleteCb = function() {
+          users = users.filter(function(u){ return u.id !== uid; });
+          renderUsersTable(); toast('User removed.'); closeModal('modal-delete');
+        };
+        openModal('modal-delete');
+      });
+    });
+  }
+
+  q('btn-add-user').addEventListener('click', function() {
+    q('nu-name').value = ''; q('nu-email').value = ''; q('nu-role').value = 'Author';
+    openModal('modal-user');
+  });
+  q('confirm-add-user').addEventListener('click', function() {
+    var name  = q('nu-name').value.trim();
+    var email = q('nu-email').value.trim();
+    var role  = q('nu-role').value;
+    if (!name || !email) { toast('Name and email are required.'); return; }
+    users.push({ id: nextId++, name: name, email: email, role: role, status: 'Active', joined: new Date().toISOString().split('T')[0] });
+    renderUsersTable(); closeModal('modal-user'); toast('User added successfully!');
+  });
+
+  /* ── REPORTS ── */
+  function renderReports() {
+    var cats = ['Security','Infrastructure','AI & Automation','Networking','Cloud','DevOps','Compliance'];
+    var catData = cats.map(function(c) {
+      return { name: c, count: articles.filter(function(a){ return a.category===c; }).length, views: articles.filter(function(a){ return a.category===c; }).reduce(function(s,a){ return s+a.views; },0) };
+    }).filter(function(c){ return c.count>0; });
+
+    q('rep-cat').innerHTML = catData.map(function(c){
+      return '<tr><td><span class="tag">'+c.name+'</span></td><td style="font-weight:700">'+c.count+'</td><td>'+c.views.toLocaleString()+'</td></tr>';
+    }).join('');
+
+    var sorted = articles.slice().sort(function(a,b){ return b.views-a.views; }).slice(0,5);
+    var maxV = sorted[0].views;
+    q('rep-top').innerHTML = sorted.map(function(a){
+      return '<div class="bar-row"><div class="bar-label">'+a.title+'</div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(a.views/maxV*100)+'%"></div></div><div class="bar-num">'+a.views.toLocaleString()+'</div></div>';
+    }).join('');
+
+    var maxC = Math.max.apply(null, catData.map(function(c){ return c.views; }));
+    q('rep-bars').innerHTML = catData.map(function(c){
+      return '<div class="bar-row"><div class="bar-label">'+c.name+'</div><div class="bar-track" style="height:11px"><div class="bar-fill" style="width:'+Math.round(c.views/maxC*100)+'%;height:11px;border-radius:6px"></div></div><div class="bar-num">'+c.views.toLocaleString()+'</div></div>';
+    }).join('');
+  }
+
+  q('btn-export').addEventListener('click', function(){ toast('CSV exported successfully!'); });
+
+  /* ── SETTINGS TABS ── */
+  document.querySelectorAll('.set-nav-item[data-tab]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tab = btn.getAttribute('data-tab');
+      ['profile','security','notifications','system'].forEach(function(t) {
+        q('stab-'+t).classList.toggle('hidden', t !== tab);
+      });
+      document.querySelectorAll('.set-nav-item').forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-tab') === tab);
+      });
+    });
+  });
+
+  q('btn-save-profile').addEventListener('click', function(){ toast('Profile saved!'); });
+  q('btn-avatar').addEventListener('click', function(){ toast('Avatar upload coming soon!'); });
+  q('btn-2fa').addEventListener('click', function(){ toast('2FA setup initiated!'); });
+  q('btn-terminate').addEventListener('click', function(){ toast('All other sessions terminated.'); });
+  q('btn-update-pw').addEventListener('click', function(){ toast('Password updated!'); });
+  q('btn-save-notifs').addEventListener('click', function(){ toast('Notification preferences saved!'); });
+  q('btn-maintenance').addEventListener('click', function(){ toast('Maintenance mode toggled!'); });
+  q('btn-clear-cache').addEventListener('click', function(){ toast('Cache cleared!'); });
+  q('btn-save-sys').addEventListener('click', function(){ toast('System settings saved!'); });
+
+  /* ── DELETE MODAL ── */
+  q('confirm-delete').addEventListener('click', function() {
+    if (deleteCb) { deleteCb(); deleteCb = null; }
+  });
+  q('close-delete').addEventListener('click', function(){ closeModal('modal-delete'); });
+  q('cancel-delete').addEventListener('click', function(){ closeModal('modal-delete'); });
+
+  /* ── USER MODAL CLOSE ── */
+  q('close-user-modal').addEventListener('click', function(){ closeModal('modal-user'); });
+  q('cancel-user-modal').addEventListener('click', function(){ closeModal('modal-user'); });
+
+  /* ── BACKDROP CLICK ── */
+  document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+
+  /* ── ESC ── */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(function(m){ m.classList.remove('open'); });
+  });
+
+});
+</script>
+</body>
+</html>

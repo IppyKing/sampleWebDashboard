@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AssetPulse — IT Equipment Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-900:#0a1628;--navy-800:#0f1f3d;--navy-700:#152952;--navy-600:#1b3468;
+  --navy-500:#213e7d;--navy-400:#3b5998;--navy-300:#5a7ab5;
+  --yellow-500:#f5c518;--yellow-400:#ffd747;--yellow-300:#ffe066;--yellow-200:#fff0a3;
+  --white:#fff;--off-white:#f4f6fb;--gray-50:#f8f9fc;--gray-100:#e8ecf4;
+  --gray-200:#d0d7e5;--gray-300:#9aa5b9;--gray-400:#6b7a94;
+  --danger:#e74c5e;--success:#27ae60;--info:#5dade2;--warning:#f39c12;
+  --font-display:'Outfit',sans-serif;--font-body:'DM Sans',sans-serif;
+  --sidebar-w:256px;--header-h:62px;--radius:12px;--radius-sm:8px;
+  --shadow-sm:0 1px 3px rgba(10,22,40,.07);--shadow-md:0 4px 16px rgba(10,22,40,.1);
+  --shadow-lg:0 8px 32px rgba(10,22,40,.14);--transition:.25s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:14.5px;scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--off-white);color:var(--navy-800);overflow-x:hidden;min-height:100vh}
+a{text-decoration:none;color:inherit}button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,textarea,select{font-family:inherit;outline:none}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:3px}
+
+/* ═══ LOGIN ═══ */
+.login-screen{position:fixed;inset:0;z-index:9999;display:flex;background:var(--navy-900);transition:opacity .5s,visibility .5s}
+.login-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.login-left{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px;position:relative;overflow:hidden}
+.login-left::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,197,24,.12),transparent 70%);top:-100px;right:-200px}
+.login-left::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(33,62,125,.3),transparent 70%);bottom:-80px;left:-100px}
+.login-brand{display:flex;align-items:center;gap:12px;margin-bottom:10px;position:relative;z-index:1}
+.login-brand .logo-box{width:48px;height:48px;background:var(--yellow-500);border-radius:12px;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:20px;color:var(--navy-900)}
+.login-brand h1{font-family:var(--font-display);font-size:1.8rem;color:var(--white);font-weight:700;letter-spacing:-.5px}
+.login-tagline{color:var(--gray-300);font-size:.92rem;margin-bottom:40px;position:relative;z-index:1}
+.login-features{display:flex;flex-direction:column;gap:16px;position:relative;z-index:1}
+.login-feature{display:flex;align-items:center;gap:14px;color:rgba(255,255,255,.65);font-size:.88rem}
+.login-feature .feat-icon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.06);display:grid;place-items:center;flex-shrink:0;border:1px solid rgba(255,255,255,.08)}
+.login-feature .feat-icon svg{width:18px;height:18px;color:var(--yellow-400)}
+.login-right{width:460px;background:var(--white);display:flex;flex-direction:column;justify-content:center;padding:56px 48px;border-radius:24px 0 0 24px}
+.login-right h2{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--navy-900);margin-bottom:6px}
+.login-right p{color:var(--gray-400);font-size:.88rem;margin-bottom:32px}
+.login-form .form-group{margin-bottom:18px}
+.login-form label{display:block;font-size:.78rem;font-weight:600;color:var(--navy-800);margin-bottom:6px}
+.login-form input{width:100%;padding:11px 14px;border:1.5px solid var(--gray-100);border-radius:10px;font-size:.9rem;transition:all var(--transition);background:var(--gray-50)}
+.login-form input:focus{border-color:var(--yellow-500);background:var(--white);box-shadow:0 0 0 3px rgba(245,197,24,.12)}
+.login-form .input-wrap{position:relative}
+.login-form .toggle-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--gray-300)}
+.login-form .toggle-pw svg{width:16px;height:16px}
+.login-remember{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;font-size:.82rem;color:var(--gray-400)}
+.login-remember label{display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:400;margin-bottom:0}
+.login-remember input[type=checkbox]{accent-color:var(--yellow-500);width:16px;height:16px}
+.login-remember a{color:var(--navy-500);font-weight:500}
+.login-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--yellow-500),var(--yellow-400));color:var(--navy-900);font-weight:700;font-size:.95rem;border-radius:10px;transition:all var(--transition);box-shadow:0 2px 10px rgba(245,197,24,.3);font-family:var(--font-display)}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(245,197,24,.4)}
+.login-error{color:var(--danger);font-size:.8rem;margin-top:10px;display:none;text-align:center}
+.login-footer{text-align:center;margin-top:28px;font-size:.78rem;color:var(--gray-300)}
+.login-footer strong{color:var(--navy-800)}
+@media(max-width:860px){.login-left{display:none}.login-right{width:100%;border-radius:0;padding:40px 28px}}
+
+/* ═══ APP LAYOUT ═══ */
+.app{display:flex;min-height:100vh;display:none}
+.app.show{display:flex}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{width:var(--sidebar-w);background:var(--navy-900);color:var(--white);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform var(--transition);overflow-y:auto}
+.sidebar-brand{height:var(--header-h);display:flex;align-items:center;gap:10px;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sidebar-brand .logo-sq{width:32px;height:32px;background:var(--yellow-500);border-radius:8px;display:grid;place-items:center;font-weight:800;font-size:14px;color:var(--navy-900);font-family:var(--font-display)}
+.sidebar-brand span{font-weight:700;font-size:1.05rem;font-family:var(--font-display)}
+.sidebar-brand small{font-size:.6rem;background:var(--yellow-500);color:var(--navy-900);padding:2px 6px;border-radius:4px;font-weight:700;margin-left:auto}
+.sidebar-section{padding:16px 14px 4px}
+.sidebar-section-title{font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray-400);margin-bottom:6px;padding-left:6px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:var(--radius-sm);color:rgba(255,255,255,.55);font-size:.85rem;font-weight:500;transition:all var(--transition);margin-bottom:1px;cursor:pointer}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;opacity:.65;transition:opacity var(--transition)}
+.nav-item:hover{background:rgba(255,255,255,.06);color:var(--white)}
+.nav-item:hover svg{opacity:1}
+.nav-item.active{background:linear-gradient(135deg,var(--yellow-500),var(--yellow-400));color:var(--navy-900);font-weight:600;box-shadow:0 2px 12px rgba(245,197,24,.25)}
+.nav-item.active svg{opacity:1;color:var(--navy-900)}
+.nav-badge{margin-left:auto;background:var(--danger);color:var(--white);font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:10px}
+.nav-item.active .nav-badge{background:var(--navy-900);color:var(--yellow-500)}
+.sidebar-footer{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.06)}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:8px}
+.sidebar-user .avatar{width:34px;height:34px;border-radius:50%;background:var(--navy-600);display:grid;place-items:center;font-weight:700;font-size:.75rem;color:var(--yellow-400);border:2px solid var(--yellow-500)}
+.sidebar-user-info{flex:1}
+.sidebar-user-info .name{font-size:.8rem;font-weight:600}
+.sidebar-user-info .role{font-size:.65rem;color:var(--gray-300)}
+.logout-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:var(--radius-sm);color:rgba(255,255,255,.45);font-size:.82rem;font-weight:500;transition:all var(--transition);margin-top:6px}
+.logout-btn:hover{background:rgba(231,76,94,.12);color:var(--danger)}
+.logout-btn svg{width:16px;height:16px}
+
+/* ═══ MAIN ═══ */
+.main{flex:1;margin-left:var(--sidebar-w)}
+.header{height:var(--header-h);background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--gray-100);display:flex;align-items:center;padding:0 26px;gap:14px;position:sticky;top:0;z-index:50}
+.hamburger{display:none}
+.search-bar{flex:1;max-width:440px;position:relative}
+.search-bar svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gray-300)}
+.search-bar input{width:100%;padding:9px 14px 9px 40px;border:1.5px solid var(--gray-100);border-radius:10px;font-size:.85rem;background:var(--off-white);transition:all var(--transition)}
+.search-bar input:focus{border-color:var(--yellow-500);background:var(--white);box-shadow:0 0 0 3px rgba(245,197,24,.12)}
+.header-actions{display:flex;align-items:center;gap:6px;margin-left:auto}
+.header-btn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:var(--gray-400);transition:all var(--transition);position:relative}
+.header-btn:hover{background:var(--off-white);color:var(--navy-700)}
+.header-btn svg{width:17px;height:17px}
+.header-btn .dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--danger);border-radius:50%;border:2px solid var(--white)}
+.page-title-header{font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--navy-900);display:none}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;font-weight:600;font-size:.82rem;border-radius:10px;transition:all var(--transition)}
+.btn svg{width:15px;height:15px}
+.btn-primary{background:linear-gradient(135deg,var(--yellow-500),var(--yellow-400));color:var(--navy-900);box-shadow:0 2px 8px rgba(245,197,24,.25)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,197,24,.35)}
+.btn-secondary{background:var(--navy-700);color:var(--white)}
+.btn-secondary:hover{background:var(--navy-600)}
+.btn-ghost{color:var(--gray-400);padding:9px 14px}
+.btn-ghost:hover{background:var(--off-white);color:var(--navy-700)}
+.btn-danger{background:rgba(231,76,94,.1);color:var(--danger)}
+.btn-danger:hover{background:rgba(231,76,94,.18)}
+.btn-sm{padding:6px 12px;font-size:.78rem}
+
+/* ═══ CONTENT ═══ */
+.content{padding:26px}
+.page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:12px}
+.page-header h1{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--navy-900);letter-spacing:-.3px}
+.page-header p{color:var(--gray-400);font-size:.85rem;margin-top:2px}
+.page-header-actions{display:flex;gap:8px;align-items:center}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-sm);border:1px solid var(--gray-100);overflow:hidden}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--gray-100)}
+.card-header h3{font-size:.92rem;font-weight:700;color:var(--navy-900);font-family:var(--font-display)}
+.card-body{padding:20px}
+.card-body.no-pad{padding:0}
+
+/* ═══ STAT CARDS ═══ */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-100);transition:all var(--transition);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card:nth-child(1)::before{background:var(--yellow-500)}.stat-card:nth-child(2)::before{background:var(--navy-500)}
+.stat-card:nth-child(3)::before{background:var(--success)}.stat-card:nth-child(4)::before{background:var(--info)}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.stat-icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;margin-bottom:12px}
+.stat-icon svg{width:18px;height:18px}
+.stat-card:nth-child(1) .stat-icon{background:var(--yellow-200);color:var(--navy-900)}
+.stat-card:nth-child(2) .stat-icon{background:rgba(33,62,125,.1);color:var(--navy-500)}
+.stat-card:nth-child(3) .stat-icon{background:rgba(39,174,96,.1);color:var(--success)}
+.stat-card:nth-child(4) .stat-icon{background:rgba(93,173,226,.1);color:var(--info)}
+.stat-value{font-size:1.5rem;font-weight:700;color:var(--navy-900);font-family:var(--font-display)}
+.stat-label{font-size:.75rem;color:var(--gray-400);margin-top:2px}
+.stat-change{display:inline-flex;align-items:center;gap:3px;font-size:.7rem;font-weight:600;margin-top:6px;padding:2px 7px;border-radius:6px}
+.stat-change.up{color:var(--success);background:rgba(39,174,96,.08)}
+.stat-change.down{color:var(--danger);background:rgba(231,76,94,.08)}
+
+/* ═══ TABLE ═══ */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;padding:11px 16px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-300);border-bottom:1px solid var(--gray-100);white-space:nowrap}
+tbody tr{transition:background var(--transition)}
+tbody tr:hover{background:var(--gray-50)}
+tbody td{padding:12px 16px;font-size:.84rem;border-bottom:1px solid var(--gray-100);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+
+.badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.badge-active{background:rgba(39,174,96,.1);color:var(--success)}
+.badge-assigned{background:rgba(33,62,125,.1);color:var(--navy-500)}
+.badge-maintenance{background:rgba(243,156,18,.1);color:var(--warning)}
+.badge-retired{background:rgba(107,122,148,.1);color:var(--gray-400)}
+.badge-available{background:rgba(93,173,226,.1);color:var(--info)}
+.badge-pending{background:rgba(245,197,24,.15);color:#b8960f}
+.badge-completed{background:rgba(39,174,96,.1);color:var(--success)}
+.badge-overdue{background:rgba(231,76,94,.1);color:var(--danger)}
+.badge-admin{background:var(--yellow-200);color:var(--navy-900)}
+.badge-tech{background:rgba(33,62,125,.1);color:var(--navy-500)}
+.badge-viewer{background:rgba(107,122,148,.1);color:var(--gray-400)}
+
+.item-with-icon{display:flex;align-items:center;gap:10px}
+.item-icon{width:36px;height:36px;border-radius:8px;background:var(--off-white);display:grid;place-items:center;color:var(--navy-400);flex-shrink:0}
+.item-icon svg{width:16px;height:16px}
+.item-name{font-weight:600;color:var(--navy-900)}
+.item-sub{font-size:.72rem;color:var(--gray-300);margin-top:1px}
+
+.user-cell{display:flex;align-items:center;gap:8px}
+.user-avatar{width:26px;height:26px;border-radius:50%;font-size:.6rem;font-weight:700;display:grid;place-items:center;color:var(--white);flex-shrink:0}
+
+.actions-cell{display:flex;gap:3px}
+.action-btn{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;color:var(--gray-300);transition:all var(--transition)}
+.action-btn:hover{background:var(--off-white);color:var(--navy-700)}
+.action-btn svg{width:13px;height:13px}
+
+/* ═══ TABS ═══ */
+.tabs{display:flex;gap:2px;background:var(--off-white);border-radius:var(--radius-sm);padding:3px}
+.tab{padding:6px 14px;font-size:.76rem;font-weight:500;border-radius:6px;color:var(--gray-400);transition:all var(--transition);cursor:pointer}
+.tab.active{background:var(--white);color:var(--navy-900);font-weight:600;box-shadow:var(--shadow-sm)}
+.tab:hover:not(.active){color:var(--navy-700)}
+
+/* ═══ GRID LAYOUTS ═══ */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.main-grid{display:grid;grid-template-columns:1fr 340px;gap:20px}
+
+/* ═══ ACTIVITY FEED ═══ */
+.activity-item{display:flex;gap:11px;padding:12px 0;border-bottom:1px solid var(--gray-100)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.activity-dot.yellow{background:var(--yellow-500)}.activity-dot.navy{background:var(--navy-500)}
+.activity-dot.green{background:var(--success)}.activity-dot.red{background:var(--danger)}
+.activity-text{font-size:.8rem;color:var(--navy-800);line-height:1.45}
+.activity-text strong{font-weight:600}
+.activity-time{font-size:.68rem;color:var(--gray-300);margin-top:2px}
+
+/* ═══ PROGRESS BAR ═══ */
+.progress-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--gray-100)}
+.progress-row:last-child{border-bottom:none}
+.progress-label{font-size:.8rem;color:var(--gray-400);min-width:90px}
+.progress-bar{flex:1;height:6px;background:var(--gray-100);border-radius:3px;overflow:hidden;margin:0 14px}
+.progress-fill{height:100%;border-radius:3px}
+.progress-val{font-size:.8rem;font-weight:700;color:var(--navy-900);min-width:32px;text-align:right}
+
+/* ═══ SETTING ROWS ═══ */
+.setting-group{margin-bottom:28px}
+.setting-group h4{font-family:var(--font-display);font-size:.95rem;font-weight:700;color:var(--navy-900);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--gray-100)}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--gray-100)}
+.setting-row:last-child{border-bottom:none}
+.setting-info{flex:1}
+.setting-info .setting-name{font-size:.85rem;font-weight:600;color:var(--navy-900)}
+.setting-info .setting-desc{font-size:.76rem;color:var(--gray-400);margin-top:2px}
+.toggle{width:42px;height:24px;border-radius:12px;background:var(--gray-200);position:relative;cursor:pointer;transition:background var(--transition);flex-shrink:0}
+.toggle.on{background:var(--yellow-500)}
+.toggle::after{content:'';width:18px;height:18px;border-radius:50%;background:var(--white);position:absolute;top:3px;left:3px;transition:transform var(--transition);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.toggle.on::after{transform:translateX(18px)}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,22,40,.5);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--transition)}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:16px;width:560px;max-width:94vw;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);transform:translateY(20px) scale(.97);transition:transform var(--transition)}
+.modal-overlay.show .modal{transform:translateY(0) scale(1)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--gray-100)}
+.modal-header h3{font-size:1.02rem;font-weight:700;color:var(--navy-900);font-family:var(--font-display)}
+.modal-close{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--gray-400);transition:all var(--transition)}
+.modal-close:hover{background:var(--off-white);color:var(--navy-700)}
+.modal-close svg{width:15px;height:15px}
+.modal-body{padding:24px}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:16px 24px;border-top:1px solid var(--gray-100)}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:.76rem;font-weight:600;color:var(--navy-800);margin-bottom:5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:1.5px solid var(--gray-100);border-radius:10px;font-size:.86rem;transition:all var(--transition);background:var(--white)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--yellow-500);box-shadow:0 0 0 3px rgba(245,197,24,.1)}
+.form-group textarea{resize:vertical;min-height:80px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* ═══ TOAST ═══ */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:300;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--navy-900);color:var(--white);padding:12px 18px;border-radius:10px;font-size:.84rem;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px;transform:translateX(120%);transition:transform .35s cubic-bezier(.4,0,.2,1);border-left:3px solid var(--yellow-500)}
+.toast.show{transform:translateX(0)}
+.toast svg{width:15px;height:15px;color:var(--yellow-500);flex-shrink:0}
+
+/* ═══ EMPTY STATE ═══ */
+.empty-state{text-align:center;padding:48px 20px;color:var(--gray-300)}
+.empty-state svg{width:48px;height:48px;margin-bottom:12px;opacity:.4}
+.empty-state h4{font-size:.95rem;color:var(--gray-400);font-weight:600;margin-bottom:4px}
+.empty-state p{font-size:.8rem}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeUp .45s ease both}
+.d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}.d4{animation-delay:.2s}.d5{animation-delay:.25s}
+
+/* ═══ PAGE CONTAINER ═══ */
+.page{display:none}.page.active{display:block}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1100px){.main-grid{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}.hamburger{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;color:var(--navy-700)}
+  .hamburger:hover{background:var(--off-white)}.hamburger svg{width:18px;height:18px}
+  .content{padding:16px}.page-title-header{display:block}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+}
+@media(max-width:520px){.stats-grid{grid-template-columns:1fr}.page-header{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ LOGIN SCREEN ═══════════ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-left">
+    <div class="login-brand">
+      <div class="logo-box">AFS</div>
+      <h1>Asset Management</h1>
+    </div>
+    <p class="login-tagline">Enterprise IT Equipment Management Platform</p>
+    <div class="login-features">
+      <div class="login-feature"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>Track all IT assets from laptops to servers</div>
+      <div class="login-feature"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>Manage equipment assignments to staff</div>
+      <div class="login-feature"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>Schedule maintenance & track repairs</div>
+      <div class="login-feature"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>Real-time analytics and reporting</div>
+    </div>
+  </div>
+  <div class="login-right">
+    <h2>Welcome back</h2>
+    <p>Sign in to your Asset Management account</p>
+    <div class="login-form">
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" id="loginEmail" placeholder="admin@company.com" value="admin@company.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrap">
+          <input type="password" id="loginPassword" placeholder="Enter your password" value="admin123">
+        </div>
+      </div>
+      <div class="login-remember">
+        <label><input type="checkbox" checked> Remember me</label>
+        <a href="#">Forgot password?</a>
+      </div>
+      <button class="login-btn" onclick="handleLogin()">Sign In</button>
+      <div class="login-error" id="loginError">Invalid credentials. Try admin@company.com / admin123</div>
+    </div>
+    <div class="login-footer">Demo credentials: <strong>admin@company.com</strong> / <strong>admin123</strong></div>
+  </div>
+</div>
+
+<!-- ═══════════ APP ═══════════ -->
+<div class="app" id="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo-sq">Ap</div>
+      <span>AssetPulse</span>
+      <small>v2.4</small>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Overview</div>
+      <div class="nav-item active" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Dashboard</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Assets</div>
+      <div class="nav-item" data-page="equipment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Equipment<span class="nav-badge">156</span></div>
+      <div class="nav-item" data-page="assignments"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>Assignments</div>
+      <div class="nav-item" data-page="maintenance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Maintenance<span class="nav-badge">8</span></div>
+      <div class="nav-item" data-page="categories"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Categories</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Administration</div>
+      <div class="nav-item" data-page="users"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Users</div>
+      <div class="nav-item" data-page="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</div>
+      <div class="nav-item" data-page="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar" id="sidebarAvatar">AJ</div>
+        <div class="sidebar-user-info"><div class="name" id="sidebarName">Alex Johnson</div><div class="role">Administrator</div></div>
+      </div>
+      <button class="logout-btn" onclick="handleLogout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="header">
+      <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <span class="page-title-header" id="mobileTitle">Dashboard</span>
+      <div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search equipment, users, tickets…" id="globalSearch"></div>
+      <div class="header-actions">
+        <button class="header-btn" title="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="dot"></span></button>
+        <button class="header-btn" title="Help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></button>
+      </div>
+    </header>
+    <div class="content" id="contentArea"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal"><div id="modalContent"></div></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   DATA STORE
+   ═══════════════════════════════════════ */
+const IC = { // icons
+  laptop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>',
+  monitor:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+  server:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>',
+  printer:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
+  network:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><line x1="12" y1="12" x2="12" y2="8"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  wrench:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+};
+
+const COLORS = ['#213e7d','#e74c5e','#27ae60','#f39c12','#5dade2','#8e44ad','#1abc9c','#d35400'];
+const typeIcons = {laptop:IC.laptop,monitor:IC.monitor,server:IC.server,phone:IC.phone,printer:IC.printer,network:IC.network};
+
+let DB = {
+  equipment: [
+    {id:1,name:'MacBook Pro 16"',asset:'AP-LP-001',type:'laptop',status:'assigned',assignedTo:'Sarah Kim',location:'Floor 3',purchaseDate:'2024-06-15',warranty:'2027-06-15',cost:2499,serial:'C02ZX1MDLVCG'},
+    {id:2,name:'Dell UltraSharp 27"',asset:'AP-MN-012',type:'monitor',status:'active',assignedTo:'Sarah Kim',location:'Floor 3',purchaseDate:'2024-03-10',warranty:'2027-03-10',cost:649,serial:'CN-04F23P'},
+    {id:3,name:'HP ProLiant DL380',asset:'AP-SV-003',type:'server',status:'active',assignedTo:'—',location:'Server Room A',purchaseDate:'2023-08-20',warranty:'2026-08-20',cost:8750,serial:'MXQ12345AB'},
+    {id:4,name:'iPhone 15 Pro',asset:'AP-PH-021',type:'phone',status:'assigned',assignedTo:'James Park',location:'Floor 2',purchaseDate:'2024-09-22',warranty:'2026-09-22',cost:1199,serial:'DNQXF2HLJK'},
+    {id:5,name:'HP LaserJet Pro',asset:'AP-PR-007',type:'printer',status:'maintenance',assignedTo:'—',location:'Floor 1 - Common',purchaseDate:'2023-01-11',warranty:'2026-01-11',cost:399,serial:'VNB3R10024'},
+    {id:6,name:'Cisco Catalyst 9300',asset:'AP-NW-002',type:'network',status:'active',assignedTo:'—',location:'Server Room B',purchaseDate:'2023-11-05',warranty:'2028-11-05',cost:4200,serial:'FCW2341L0RK'},
+    {id:7,name:'ThinkPad X1 Carbon',asset:'AP-LP-009',type:'laptop',status:'assigned',assignedTo:'Maria Chen',location:'Floor 2',purchaseDate:'2024-01-18',warranty:'2027-01-18',cost:1849,serial:'PF3AB1C2'},
+    {id:8,name:'Dell PowerEdge R740',asset:'AP-SV-005',type:'server',status:'maintenance',assignedTo:'—',location:'Server Room A',purchaseDate:'2022-07-03',warranty:'2025-07-03',cost:12500,serial:'FXKD820'},
+    {id:9,name:'Samsung Galaxy S24',asset:'AP-PH-035',type:'phone',status:'available',assignedTo:'—',location:'IT Storage',purchaseDate:'2025-02-14',warranty:'2027-02-14',cost:899,serial:'R5CT30AXYZ'},
+    {id:10,name:'LG 34" UltraWide',asset:'AP-MN-018',type:'monitor',status:'available',assignedTo:'—',location:'IT Storage',purchaseDate:'2025-01-20',warranty:'2028-01-20',cost:799,serial:'505NTZY4N123'},
+    {id:11,name:'MacBook Air M3',asset:'AP-LP-022',type:'laptop',status:'retired',assignedTo:'—',location:'IT Storage',purchaseDate:'2021-04-10',warranty:'2024-04-10',cost:1299,serial:'FVFZM3QHL'},
+    {id:12,name:'Ubiquiti Dream Machine',asset:'AP-NW-008',type:'network',status:'active',assignedTo:'—',location:'Floor 1 - Closet',purchaseDate:'2024-05-30',warranty:'2026-05-30',cost:379,serial:'UDM0A1B2C3'},
+  ],
+  assignments: [
+    {id:1,equipmentId:1,user:'Sarah Kim',dept:'Engineering',date:'2024-06-20',dueDate:'2025-06-20',status:'active',notes:'Primary dev machine'},
+    {id:2,equipmentId:4,user:'James Park',dept:'Marketing',date:'2024-09-25',dueDate:'2025-09-25',status:'active',notes:'Work phone'},
+    {id:3,equipmentId:7,user:'Maria Chen',dept:'Design',date:'2024-01-22',dueDate:'2025-01-22',status:'overdue',notes:'Design workstation'},
+    {id:4,equipmentId:2,user:'Sarah Kim',dept:'Engineering',date:'2024-03-15',dueDate:'—',status:'active',notes:'Desk monitor'},
+  ],
+  maintenance: [
+    {id:1,equipmentId:5,issue:'Paper jam + toner replacement',priority:'medium',status:'pending',created:'2026-03-25',tech:'David Lee'},
+    {id:2,equipmentId:8,issue:'RAID array degraded — disk replacement',priority:'high',status:'pending',created:'2026-03-28',tech:'Alex Johnson'},
+    {id:3,equipmentId:3,issue:'Firmware update & security patching',priority:'low',status:'completed',created:'2026-03-15',tech:'David Lee'},
+    {id:4,equipmentId:7,issue:'Battery swelling — needs replacement',priority:'high',status:'pending',created:'2026-03-29',tech:'Alex Johnson'},
+    {id:5,equipmentId:6,issue:'IOS upgrade to 17.9',priority:'medium',status:'completed',created:'2026-03-10',tech:'David Lee'},
+  ],
+  categories: [
+    {id:1,name:'Laptops',icon:'laptop',count:3,color:'var(--navy-500)'},
+    {id:2,name:'Monitors',icon:'monitor',count:2,color:'var(--info)'},
+    {id:3,name:'Servers',icon:'server',count:2,color:'var(--danger)'},
+    {id:4,name:'Phones',icon:'phone',count:2,color:'var(--success)'},
+    {id:5,name:'Printers',icon:'printer',count:1,color:'var(--warning)'},
+    {id:6,name:'Networking',icon:'network',count:2,color:'#8e44ad'},
+  ],
+  users: [
+    {id:1,name:'Alex Johnson',email:'alex@company.com',role:'admin',dept:'IT',initials:'AJ',color:COLORS[0]},
+    {id:2,name:'Sarah Kim',email:'sarah@company.com',role:'tech',dept:'Engineering',initials:'SK',color:COLORS[3]},
+    {id:3,name:'Maria Chen',email:'maria@company.com',role:'viewer',dept:'Design',initials:'MC',color:COLORS[1]},
+    {id:4,name:'James Park',email:'james@company.com',role:'viewer',dept:'Marketing',initials:'JP',color:COLORS[2]},
+    {id:5,name:'David Lee',email:'david@company.com',role:'tech',dept:'IT',initials:'DL',color:COLORS[4]},
+  ],
+};
+
+let currentPage = 'dashboard';
+
+/* ═══════════════════════════════════════
+   LOGIN
+   ═══════════════════════════════════════ */
+function handleLogin(){
+  const e=document.getElementById('loginEmail').value, p=document.getElementById('loginPassword').value;
+  if(e==='admin@company.com'&&p==='admin123'){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('app').classList.add('show');
+    navigate('dashboard');
+  } else {
+    document.getElementById('loginError').style.display='block';
+    document.getElementById('loginPassword').style.borderColor='var(--danger)';
+  }
+}
+function handleLogout(){
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginError').style.display='none';
+}
+document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')handleLogin()});
+document.getElementById('loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')handleLogin()});
+
+/* ═══════════════════════════════════════
+   ROUTING
+   ═══════════════════════════════════════ */
+function navigate(page){
+  currentPage=page;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===page));
+  document.getElementById('mobileTitle').textContent=page.charAt(0).toUpperCase()+page.slice(1);
+  document.getElementById('sidebar').classList.remove('open');
+  const area=document.getElementById('contentArea');
+  area.innerHTML=pages[page]();
+  area.querySelectorAll('.anim').forEach(el=>el.offsetHeight); // trigger reflow
+}
+document.addEventListener('click',e=>{
+  const nav=e.target.closest('.nav-item');
+  if(nav&&nav.dataset.page) navigate(nav.dataset.page);
+});
+
+/* ═══════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════ */
+function equipName(id){const e=DB.equipment.find(x=>x.id===id);return e?e.name:'Unknown';}
+function equipAsset(id){const e=DB.equipment.find(x=>x.id===id);return e?e.asset:'';}
+function statusBadge(s){return `<span class="badge badge-${s}">${s.charAt(0).toUpperCase()+s.slice(1)}</span>`}
+function userAvatar(name,size){const u=DB.users.find(x=>x.name===name);const c=u?u.color:COLORS[0];const i=name.split(' ').map(w=>w[0]).join('');return `<div class="user-avatar" style="background:${c};width:${size||26}px;height:${size||26}px">${i}</div>`;}
+function tableActions(editFn,delFn){return `<div class="actions-cell"><button class="action-btn" onclick="${editFn}">${IC.edit}</button><button class="action-btn" onclick="${delFn}">${IC.trash}</button></div>`;}
+function totalCost(){return DB.equipment.reduce((a,e)=>a+e.cost,0);}
+function fmt$(n){return '$'+n.toLocaleString();}
+
+/* ═══════════════════════════════════════
+   PAGE RENDERERS
+   ═══════════════════════════════════════ */
+const pages = {};
+
+// ──── DASHBOARD ────
+pages.dashboard=()=>{
+  const total=DB.equipment.length, assigned=DB.equipment.filter(e=>e.status==='assigned').length,
+    maint=DB.maintenance.filter(m=>m.status==='pending').length, avail=DB.equipment.filter(e=>e.status==='available').length;
+  return `
+  <div class="page-header anim"><div><h1>Dashboard</h1><p>IT equipment overview at a glance</p></div></div>
+  <div class="stats-grid">
+    <div class="stat-card anim d1"><div class="stat-icon">${IC.monitor}</div><div class="stat-value">${total}</div><div class="stat-label">Total Equipment</div><div class="stat-change up">▲ 4 this month</div></div>
+    <div class="stat-card anim d2"><div class="stat-icon">${IC.laptop}</div><div class="stat-value">${assigned}</div><div class="stat-label">Assigned Items</div><div class="stat-change up">▲ 2 this month</div></div>
+    <div class="stat-card anim d3"><div class="stat-icon">${IC.wrench}</div><div class="stat-value">${maint}</div><div class="stat-label">Pending Repairs</div><div class="stat-change down">▼ 1 this week</div></div>
+    <div class="stat-card anim d4"><div class="stat-icon">${IC.check}</div><div class="stat-value">${fmt$(totalCost())}</div><div class="stat-label">Total Asset Value</div><div class="stat-change up">▲ 8.5%</div></div>
+  </div>
+  <div class="main-grid">
+    <div class="card anim d4"><div class="card-header"><h3>Recent Equipment</h3><button class="btn btn-primary btn-sm" onclick="navigate('equipment')">${IC.eye} View All</button></div>
+      <div class="card-body no-pad"><div class="table-wrap"><table><thead><tr><th>Equipment</th><th>Asset #</th><th>Status</th><th>Location</th></tr></thead><tbody>
+      ${DB.equipment.slice(0,6).map(e=>`<tr><td><div class="item-with-icon"><div class="item-icon">${typeIcons[e.type]||IC.monitor}</div><div><div class="item-name">${e.name}</div><div class="item-sub">${e.type}</div></div></div></td><td style="font-family:monospace;font-size:.78rem;color:var(--gray-400)">${e.asset}</td><td>${statusBadge(e.status)}</td><td style="font-size:.82rem;color:var(--gray-400)">${e.location}</td></tr>`).join('')}
+      </tbody></table></div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div class="card anim d5"><div class="card-header"><h3>Recent Activity</h3></div><div class="card-body">
+        <div class="activity-item"><div class="activity-dot yellow"></div><div><div class="activity-text"><strong>Alex Johnson</strong> logged maintenance ticket for HP LaserJet</div><div class="activity-time">2 hours ago</div></div></div>
+        <div class="activity-item"><div class="activity-dot navy"></div><div><div class="activity-text"><strong>Sarah Kim</strong> was assigned MacBook Pro 16"</div><div class="activity-time">5 hours ago</div></div></div>
+        <div class="activity-item"><div class="activity-dot green"></div><div><div class="activity-text"><strong>David Lee</strong> completed Cisco firmware update</div><div class="activity-time">1 day ago</div></div></div>
+        <div class="activity-item"><div class="activity-dot red"></div><div><div class="activity-text"><strong>System</strong> flagged Dell PowerEdge RAID alert</div><div class="activity-time">2 days ago</div></div></div>
+      </div></div>
+      <div class="card anim d5"><div class="card-header"><h3>Assets by Category</h3></div><div class="card-body">
+        ${DB.categories.map(c=>`<div class="progress-row"><div class="progress-label">${c.name}</div><div class="progress-bar"><div class="progress-fill" style="width:${c.count/total*100}%;background:${c.color}"></div></div><div class="progress-val">${c.count}</div></div>`).join('')}
+      </div></div>
+    </div>
+  </div>`;
+};
+
+// ──── EQUIPMENT ────
+pages.equipment=()=>{
+  return `
+  <div class="page-header anim"><div><h1>Equipment</h1><p>Manage all IT assets and inventory</p></div><div class="page-header-actions"><button class="btn btn-secondary btn-sm">${IC.download} Export</button><button class="btn btn-primary" onclick="openEquipmentModal()">${IC.plus} Add Equipment</button></div></div>
+  <div class="card anim d1"><div class="card-header"><h3>All Equipment (${DB.equipment.length})</h3><div class="tabs"><button class="tab active" onclick="filterEquip('all',this)">All</button><button class="tab" onclick="filterEquip('active',this)">Active</button><button class="tab" onclick="filterEquip('assigned',this)">Assigned</button><button class="tab" onclick="filterEquip('maintenance',this)">Maintenance</button><button class="tab" onclick="filterEquip('available',this)">Available</button></div></div>
+  <div class="card-body no-pad"><div class="table-wrap"><table><thead><tr><th>Equipment</th><th>Asset Tag</th><th>Status</th><th>Assigned To</th><th>Location</th><th>Value</th><th></th></tr></thead>
+  <tbody id="equipTable">${renderEquipRows(DB.equipment)}</tbody></table></div></div></div>`;
+};
+function renderEquipRows(data){
+  return data.map(e=>`<tr><td><div class="item-with-icon"><div class="item-icon">${typeIcons[e.type]||IC.monitor}</div><div><div class="item-name">${e.name}</div><div class="item-sub">${e.serial}</div></div></div></td><td style="font-family:monospace;font-size:.78rem;color:var(--gray-400)">${e.asset}</td><td>${statusBadge(e.status)}</td><td><div class="user-cell">${e.assignedTo!=='—'?userAvatar(e.assignedTo):''}<span style="font-size:.82rem">${e.assignedTo}</span></div></td><td style="font-size:.82rem;color:var(--gray-400)">${e.location}</td><td style="font-weight:600">${fmt$(e.cost)}</td><td>${tableActions(`showToast('Edit: ${e.name}')`,`deleteEquipment(${e.id})`)}</td></tr>`).join('');
+}
+window.filterEquip=function(f,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
+  const filtered=f==='all'?DB.equipment:DB.equipment.filter(e=>e.status===f);
+  document.getElementById('equipTable').innerHTML=renderEquipRows(filtered);
+};
+window.deleteEquipment=function(id){
+  const i=DB.equipment.findIndex(e=>e.id===id);
+  if(i>-1){const n=DB.equipment[i].name;DB.equipment.splice(i,1);navigate('equipment');showToast(`"${n}" removed`);}
+};
+
+// ──── ASSIGNMENTS ────
+pages.assignments=()=>{
+  return `
+  <div class="page-header anim"><div><h1>Assignments</h1><p>Equipment assigned to staff members</p></div><div class="page-header-actions"><button class="btn btn-primary" onclick="openAssignModal()">${IC.plus} New Assignment</button></div></div>
+  <div class="card anim d1"><div class="card-header"><h3>Active Assignments (${DB.assignments.length})</h3></div>
+  <div class="card-body no-pad"><div class="table-wrap"><table><thead><tr><th>Equipment</th><th>Assigned To</th><th>Department</th><th>Date Assigned</th><th>Due Date</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody>
+  ${DB.assignments.map(a=>`<tr><td><div class="item-with-icon"><div class="item-icon">${typeIcons[DB.equipment.find(e=>e.id===a.equipmentId)?.type]||IC.monitor}</div><div><div class="item-name">${equipName(a.equipmentId)}</div><div class="item-sub">${equipAsset(a.equipmentId)}</div></div></div></td><td><div class="user-cell">${userAvatar(a.user)} ${a.user}</div></td><td style="font-size:.82rem;color:var(--gray-400)">${a.dept}</td><td style="font-size:.82rem;color:var(--gray-400)">${a.date}</td><td style="font-size:.82rem;color:var(--gray-400)">${a.dueDate}</td><td>${statusBadge(a.status)}</td><td style="font-size:.8rem;color:var(--gray-400);max-width:120px">${a.notes}</td><td>${tableActions(`showToast('Editing...')`,`deleteAssign(${a.id})`)}</td></tr>`).join('')}
+  </tbody></table></div></div></div>`;
+};
+window.deleteAssign=function(id){DB.assignments=DB.assignments.filter(a=>a.id!==id);navigate('assignments');showToast('Assignment removed');};
+
+// ──── MAINTENANCE ────
+pages.maintenance=()=>{
+  const priorityBadge=p=>`<span class="badge badge-${p==='high'?'overdue':p==='medium'?'pending':'available'}">${p.charAt(0).toUpperCase()+p.slice(1)}</span>`;
+  return `
+  <div class="page-header anim"><div><h1>Maintenance</h1><p>Service tickets and repair schedules</p></div><div class="page-header-actions"><button class="btn btn-primary" onclick="openMaintenanceModal()">${IC.plus} New Ticket</button></div></div>
+  <div class="card anim d1"><div class="card-header"><h3>Service Tickets (${DB.maintenance.length})</h3><div class="tabs"><button class="tab active" onclick="filterMaint('all',this)">All</button><button class="tab" onclick="filterMaint('pending',this)">Pending</button><button class="tab" onclick="filterMaint('completed',this)">Completed</button></div></div>
+  <div class="card-body no-pad"><div class="table-wrap"><table><thead><tr><th>Equipment</th><th>Issue</th><th>Priority</th><th>Status</th><th>Technician</th><th>Created</th><th></th></tr></thead><tbody id="maintTable">
+  ${renderMaintRows(DB.maintenance)}</tbody></table></div></div></div>`;
+};
+function renderMaintRows(data){
+  const priorityBadge=p=>`<span class="badge badge-${p==='high'?'overdue':p==='medium'?'pending':'available'}">${p.charAt(0).toUpperCase()+p.slice(1)}</span>`;
+  return data.map(m=>`<tr><td><div class="item-with-icon"><div class="item-icon">${IC.wrench}</div><div><div class="item-name">${equipName(m.equipmentId)}</div><div class="item-sub">${equipAsset(m.equipmentId)}</div></div></div></td><td style="font-size:.82rem;max-width:200px">${m.issue}</td><td>${priorityBadge(m.priority)}</td><td>${statusBadge(m.status)}</td><td><div class="user-cell">${userAvatar(m.tech)} ${m.tech}</div></td><td style="font-size:.82rem;color:var(--gray-400)">${m.created}</td><td>${tableActions(`showToast('Editing...')`,`deleteMaint(${m.id})`)}</td></tr>`).join('');
+}
+window.filterMaint=function(f,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
+  const filtered=f==='all'?DB.maintenance:DB.maintenance.filter(m=>m.status===f);
+  document.getElementById('maintTable').innerHTML=renderMaintRows(filtered);
+};
+window.deleteMaint=function(id){DB.maintenance=DB.maintenance.filter(m=>m.id!==id);navigate('maintenance');showToast('Ticket removed');};
+
+// ──── CATEGORIES ────
+pages.categories=()=>{
+  return `
+  <div class="page-header anim"><div><h1>Categories</h1><p>Equipment type classifications</p></div><div class="page-header-actions"><button class="btn btn-primary" onclick="openCategoryModal()">${IC.plus} Add Category</button></div></div>
+  <div class="grid-3 anim d1">${DB.categories.map(c=>`
+    <div class="card" style="cursor:pointer" onclick="showToast('Viewing ${c.name}')"><div class="card-body" style="text-align:center;padding:32px 20px">
+      <div style="width:56px;height:56px;border-radius:14px;background:${c.color}15;display:inline-grid;place-items:center;margin-bottom:14px;color:${c.color}">${typeIcons[c.icon]||IC.monitor}</div>
+      <h3 style="font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--navy-900)">${c.name}</h3>
+      <p style="font-size:.82rem;color:var(--gray-400);margin-top:4px">${c.count} item${c.count!==1?'s':''}</p>
+    </div></div>`).join('')}</div>`;
+};
+
+// ──── USERS ────
+pages.users=()=>{
+  return `
+  <div class="page-header anim"><div><h1>Users</h1><p>Manage system users and permissions</p></div><div class="page-header-actions"><button class="btn btn-primary" onclick="openUserModal()">${IC.plus} Add User</button></div></div>
+  <div class="card anim d1"><div class="card-header"><h3>All Users (${DB.users.length})</h3></div>
+  <div class="card-body no-pad"><div class="table-wrap"><table><thead><tr><th>User</th><th>Email</th><th>Department</th><th>Role</th><th>Assigned Items</th><th></th></tr></thead><tbody>
+  ${DB.users.map(u=>{
+    const items=DB.equipment.filter(e=>e.assignedTo===u.name).length;
+    return `<tr><td><div class="user-cell">${userAvatar(u.name,32)} <div><div class="item-name">${u.name}</div></div></div></td><td style="font-size:.82rem;color:var(--gray-400)">${u.email}</td><td style="font-size:.82rem">${u.dept}</td><td>${statusBadge(u.role)}</td><td style="font-weight:600">${items}</td><td>${tableActions(`showToast('Editing ${u.name}')`,`deleteUser(${u.id})`)}</td></tr>`;
+  }).join('')}
+  </tbody></table></div></div></div>`;
+};
+window.deleteUser=function(id){DB.users=DB.users.filter(u=>u.id!==id);navigate('users');showToast('User removed');};
+
+// ──── REPORTS ────
+pages.reports=()=>{
+  const byType={};DB.equipment.forEach(e=>{byType[e.type]=(byType[e.type]||0)+1;});
+  const byStatus={};DB.equipment.forEach(e=>{byStatus[e.status]=(byStatus[e.status]||0)+1;});
+  const statusColors={active:'var(--success)',assigned:'var(--navy-500)',maintenance:'var(--warning)',available:'var(--info)',retired:'var(--gray-300)'};
+  return `
+  <div class="page-header anim"><div><h1>Reports</h1><p>Analytics and insights on your IT assets</p></div><div class="page-header-actions"><button class="btn btn-secondary btn-sm">${IC.download} Export PDF</button></div></div>
+  <div class="stats-grid anim d1">
+    <div class="stat-card"><div class="stat-icon">${IC.monitor}</div><div class="stat-value">${DB.equipment.length}</div><div class="stat-label">Total Assets</div></div>
+    <div class="stat-card"><div class="stat-icon">${IC.laptop}</div><div class="stat-value">${fmt$(totalCost())}</div><div class="stat-label">Total Value</div></div>
+    <div class="stat-card"><div class="stat-icon">${IC.wrench}</div><div class="stat-value">${DB.maintenance.filter(m=>m.status==='pending').length}</div><div class="stat-label">Open Tickets</div></div>
+    <div class="stat-card"><div class="stat-icon">${IC.check}</div><div class="stat-value">${Math.round(DB.equipment.filter(e=>e.status==='assigned').length/DB.equipment.length*100)}%</div><div class="stat-label">Utilization Rate</div></div>
+  </div>
+  <div class="grid-2 anim d2">
+    <div class="card"><div class="card-header"><h3>Assets by Type</h3></div><div class="card-body">
+      ${Object.entries(byType).map(([t,c])=>`<div class="progress-row"><div class="progress-label" style="text-transform:capitalize">${t}s</div><div class="progress-bar"><div class="progress-fill" style="width:${c/DB.equipment.length*100}%;background:var(--navy-500)"></div></div><div class="progress-val">${c}</div></div>`).join('')}
+    </div></div>
+    <div class="card"><div class="card-header"><h3>Assets by Status</h3></div><div class="card-body">
+      ${Object.entries(byStatus).map(([s,c])=>`<div class="progress-row"><div class="progress-label" style="text-transform:capitalize">${s}</div><div class="progress-bar"><div class="progress-fill" style="width:${c/DB.equipment.length*100}%;background:${statusColors[s]||'var(--gray-300)'}"></div></div><div class="progress-val">${c}</div></div>`).join('')}
+    </div></div>
+  </div>
+  <div class="card anim d3" style="margin-top:20px"><div class="card-header"><h3>Cost by Category</h3></div><div class="card-body">
+    ${DB.categories.map(cat=>{const catCost=DB.equipment.filter(e=>e.type===cat.icon).reduce((a,e)=>a+e.cost,0);return `<div class="progress-row"><div class="progress-label">${cat.name}</div><div class="progress-bar"><div class="progress-fill" style="width:${catCost/totalCost()*100}%;background:${cat.color}"></div></div><div class="progress-val">${fmt$(catCost)}</div></div>`;}).join('')}
+  </div></div>`;
+};
+
+// ──── SETTINGS ────
+pages.settings=()=>`
+  <div class="page-header anim"><div><h1>Settings</h1><p>Configure your AssetPulse instance</p></div></div>
+  <div class="card anim d1"><div class="card-body">
+    <div class="setting-group"><h4>General</h4>
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">Company Name</div><div class="setting-desc">Displayed in headers and reports</div></div><input style="max-width:260px;padding:8px 12px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:.85rem" value="Acme Corp"></div>
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">Asset Tag Prefix</div><div class="setting-desc">Auto-prepended to new asset tags</div></div><input style="max-width:120px;padding:8px 12px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:.85rem;font-family:monospace" value="AP-"></div>
+    </div>
+    <div class="setting-group"><h4>Notifications</h4>
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">Email Alerts</div><div class="setting-desc">Receive email for new tickets & overdue items</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">Warranty Expiry Warnings</div><div class="setting-desc">Alert 30 days before warranty expires</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">Assignment Reminders</div><div class="setting-desc">Weekly summary of overdue assignments</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+    <div class="setting-group"><h4>Security</h4>
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">Two-Factor Authentication</div><div class="setting-desc">Require 2FA for all admin users</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="setting-row"><div class="setting-info"><div class="setting-name">Session Timeout</div><div class="setting-desc">Auto-logout after inactivity</div></div><select style="padding:8px 12px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:.85rem"><option>15 minutes</option><option selected>30 minutes</option><option>1 hour</option><option>4 hours</option></select></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:12px;border-top:1px solid var(--gray-100)"><button class="btn btn-ghost">Cancel</button><button class="btn btn-primary" onclick="showToast('Settings saved')">${IC.check} Save Settings</button></div>
+  </div></div>`;
+
+/* ═══════════════════════════════════════
+   MODALS
+   ═══════════════════════════════════════ */
+function openModal(html){document.getElementById('modalContent').innerHTML=html;document.getElementById('modalOverlay').classList.add('show');}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show');}
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+
+window.openEquipmentModal=function(){
+  openModal(`<div class="modal-header"><h3>Add Equipment</h3><button class="modal-close" onclick="closeModal()">${IC.close}</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label>Name</label><input id="mEqName" placeholder="e.g. MacBook Pro 16&quot;"></div>
+    <div class="form-row"><div class="form-group"><label>Type</label><select id="mEqType"><option value="laptop">Laptop</option><option value="monitor">Monitor</option><option value="server">Server</option><option value="phone">Phone</option><option value="printer">Printer</option><option value="network">Networking</option></select></div>
+    <div class="form-group"><label>Status</label><select id="mEqStatus"><option value="available">Available</option><option value="active">Active</option><option value="assigned">Assigned</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label>Location</label><input id="mEqLoc" placeholder="e.g. Floor 2"></div><div class="form-group"><label>Cost ($)</label><input id="mEqCost" type="number" placeholder="0"></div></div>
+    <div class="form-group"><label>Serial Number</label><input id="mEqSerial" placeholder="Enter serial number"></div>
+  </div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveEquipment()">${IC.check} Save</button></div>`);
+};
+window.saveEquipment=function(){
+  const name=document.getElementById('mEqName').value.trim();if(!name){showToast('Please enter a name');return;}
+  const type=document.getElementById('mEqType').value, status=document.getElementById('mEqStatus').value;
+  const prefix={laptop:'LP',monitor:'MN',server:'SV',phone:'PH',printer:'PR',network:'NW'}[type]||'XX';
+  DB.equipment.unshift({id:Date.now(),name,asset:`AP-${prefix}-${String(DB.equipment.length+1).padStart(3,'0')}`,type,status,assignedTo:'—',location:document.getElementById('mEqLoc').value||'IT Storage',purchaseDate:'2026-03-31',warranty:'2029-03-31',cost:parseInt(document.getElementById('mEqCost').value)||0,serial:document.getElementById('mEqSerial').value||'N/A'});
+  // update category count
+  const cat=DB.categories.find(c=>c.icon===type);if(cat)cat.count++;
+  closeModal();navigate('equipment');showToast(`"${name}" added`);
+};
+
+window.openAssignModal=function(){
+  const availEquip=DB.equipment.filter(e=>e.status==='available'||e.status==='active');
+  openModal(`<div class="modal-header"><h3>New Assignment</h3><button class="modal-close" onclick="closeModal()">${IC.close}</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label>Equipment</label><select id="mAsEquip">${availEquip.map(e=>`<option value="${e.id}">${e.name} (${e.asset})</option>`).join('')}</select></div>
+    <div class="form-row"><div class="form-group"><label>Assign To</label><select id="mAsUser">${DB.users.map(u=>`<option>${u.name}</option>`).join('')}</select></div>
+    <div class="form-group"><label>Department</label><input id="mAsDept" placeholder="e.g. Engineering"></div></div>
+    <div class="form-group"><label>Notes</label><textarea id="mAsNotes" placeholder="Assignment notes..."></textarea></div>
+  </div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveAssignment()">${IC.check} Assign</button></div>`);
+};
+window.saveAssignment=function(){
+  const eqId=parseInt(document.getElementById('mAsEquip').value), user=document.getElementById('mAsUser').value;
+  const eq=DB.equipment.find(e=>e.id===eqId);if(eq){eq.status='assigned';eq.assignedTo=user;}
+  DB.assignments.unshift({id:Date.now(),equipmentId:eqId,user,dept:document.getElementById('mAsDept').value||'—',date:'2026-03-31',dueDate:'2027-03-31',status:'active',notes:document.getElementById('mAsNotes').value||''});
+  closeModal();navigate('assignments');showToast(`${equipName(eqId)} assigned to ${user}`);
+};
+
+window.openMaintenanceModal=function(){
+  openModal(`<div class="modal-header"><h3>New Maintenance Ticket</h3><button class="modal-close" onclick="closeModal()">${IC.close}</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label>Equipment</label><select id="mMtEquip">${DB.equipment.map(e=>`<option value="${e.id}">${e.name} (${e.asset})</option>`).join('')}</select></div>
+    <div class="form-group"><label>Issue Description</label><textarea id="mMtIssue" placeholder="Describe the issue..."></textarea></div>
+    <div class="form-row"><div class="form-group"><label>Priority</label><select id="mMtPri"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+    <div class="form-group"><label>Assign Technician</label><select id="mMtTech">${DB.users.filter(u=>u.role==='admin'||u.role==='tech').map(u=>`<option>${u.name}</option>`).join('')}</select></div></div>
+  </div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveMaintenance()">${IC.check} Create Ticket</button></div>`);
+};
+window.saveMaintenance=function(){
+  const eqId=parseInt(document.getElementById('mMtEquip').value), issue=document.getElementById('mMtIssue').value.trim();
+  if(!issue){showToast('Please describe the issue');return;}
+  DB.maintenance.unshift({id:Date.now(),equipmentId:eqId,issue,priority:document.getElementById('mMtPri').value,status:'pending',created:'2026-03-31',tech:document.getElementById('mMtTech').value});
+  const eq=DB.equipment.find(e=>e.id===eqId);if(eq)eq.status='maintenance';
+  closeModal();navigate('maintenance');showToast('Ticket created');
+};
+
+window.openCategoryModal=function(){
+  openModal(`<div class="modal-header"><h3>Add Category</h3><button class="modal-close" onclick="closeModal()">${IC.close}</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label>Category Name</label><input id="mCatName" placeholder="e.g. Tablets"></div>
+    <div class="form-group"><label>Icon Key</label><select id="mCatIcon"><option value="laptop">Laptop</option><option value="monitor">Monitor</option><option value="server">Server</option><option value="phone">Phone</option><option value="printer">Printer</option><option value="network">Network</option></select></div>
+  </div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveCategory()">${IC.check} Save</button></div>`);
+};
+window.saveCategory=function(){
+  const name=document.getElementById('mCatName').value.trim();if(!name){showToast('Please enter a name');return;}
+  DB.categories.push({id:Date.now(),name,icon:document.getElementById('mCatIcon').value,count:0,color:COLORS[DB.categories.length%COLORS.length]});
+  closeModal();navigate('categories');showToast(`Category "${name}" added`);
+};
+
+window.openUserModal=function(){
+  openModal(`<div class="modal-header"><h3>Add User</h3><button class="modal-close" onclick="closeModal()">${IC.close}</button></div>
+  <div class="modal-body">
+    <div class="form-row"><div class="form-group"><label>Full Name</label><input id="mUsName" placeholder="e.g. Jane Doe"></div><div class="form-group"><label>Email</label><input id="mUsEmail" placeholder="jane@company.com"></div></div>
+    <div class="form-row"><div class="form-group"><label>Department</label><input id="mUsDept" placeholder="e.g. Engineering"></div><div class="form-group"><label>Role</label><select id="mUsRole"><option value="viewer">Viewer</option><option value="tech">Technician</option><option value="admin">Administrator</option></select></div></div>
+  </div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveUser()">${IC.check} Save</button></div>`);
+};
+window.saveUser=function(){
+  const name=document.getElementById('mUsName').value.trim();if(!name){showToast('Please enter a name');return;}
+  const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase();
+  DB.users.push({id:Date.now(),name,email:document.getElementById('mUsEmail').value||'',role:document.getElementById('mUsRole').value,dept:document.getElementById('mUsDept').value||'',initials,color:COLORS[DB.users.length%COLORS.length]});
+  closeModal();navigate('users');showToast(`User "${name}" added`);
+};
+
+/* ═══════════════════════════════════════
+   SEARCH
+   ═══════════════════════════════════════ */
+document.getElementById('globalSearch').addEventListener('input',function(){
+  const q=this.value.toLowerCase();
+  document.querySelectorAll('#contentArea tbody tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});
+});
+
+/* ═══════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════ */
+function showToast(msg){
+  const c=document.getElementById('toastContainer'),t=document.createElement('div');
+  t.className='toast';t.innerHTML=`${IC.check} ${msg}`;c.appendChild(t);
+  requestAnimationFrame(()=>t.classList.add('show'));
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),350);},3000);
+}
+
+/* ═══════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════ */
+// pre-load dashboard but keep hidden behind login
+navigate('dashboard');
+</script>
+</body>
+</html>
